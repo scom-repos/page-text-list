@@ -46,20 +46,9 @@ export default class Config extends Module {
   set data(config: IConfig) {
     this.edtTitle.value = config.title || "";
     this.edtDesc.value = config.description || "";
-    this.itemList = config.data || [];
   }
 
-  private renderList() {
-    this.itemMap = new Map();
-    this.listStack.clearInnerHTML();
-    if (this._itemList.length) {
-      this._itemList.forEach(item => {
-        this.addItem(item);
-      })
-    }
-  }
-
-  private addItem(data?: IData) {
+  private addItem(item?: IData) {
     const lastIndex = this.itemList.length;
     const itemElm = (
       <i-vstack
@@ -80,7 +69,7 @@ export default class Config extends Module {
           <i-label caption="*" font={{ color: 'red' }} margin={{left: '4px'}}></i-label>
           <i-label caption=":"></i-label>
         </i-hstack>
-        <i-input width="100%" value={data.name || ''} onChanged={(source: Control) => this.updateList(source, lastIndex, 'name')}></i-input>
+        <i-input width="100%" value={item.name || ''} onChanged={(source: Control) => this.updateList(source, lastIndex, 'name')}></i-input>
         <i-label caption="Description:"></i-label>
         <i-input
           class={textareaStyle}
@@ -88,7 +77,7 @@ export default class Config extends Module {
           height="auto"
           resize="auto-grow"
           inputType='textarea'
-          value={data.caption || ''}
+          value={item.caption || ''}
           onChanged={(source: Control) => this.updateList(source, lastIndex, 'caption')}
         ></i-input>
         <i-label caption="Image:"></i-label>
@@ -98,12 +87,21 @@ export default class Config extends Module {
             maxWidth={200}
             class={uploadStyle}
             onChanged={(source: Control) => this.updateList(source, lastIndex, 'img')}
+            onRemoved={() => this.onRemoved(lastIndex)}
           ></i-upload>
         </i-panel>
       </i-vstack>
     );
     this.listStack.appendChild(itemElm);
     this.itemMap.set(lastIndex, { name: '' });
+  }
+
+  private onRemoved(index: number) {
+    if (this.itemMap.has(index)) {
+      const item = this.itemMap.get(index);
+      item.img = '';
+      this.itemMap.set(index, item);
+    }
   }
 
   private deleteItem(source: Control, index: number) {

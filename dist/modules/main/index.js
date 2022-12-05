@@ -58,18 +58,8 @@ define("@feature/main/config.tsx", ["require", "exports", "@ijstech/components",
         set data(config) {
             this.edtTitle.value = config.title || "";
             this.edtDesc.value = config.description || "";
-            this.itemMap = new Map();
-            this.itemList = config.data || [];
         }
-        renderList() {
-            this.listStack.clearInnerHTML();
-            if (this._itemList.length) {
-                this._itemList.forEach(item => {
-                    this.addItem(item);
-                });
-            }
-        }
-        addItem(data) {
+        addItem(item) {
             const lastIndex = this.itemList.length;
             const itemElm = (this.$render("i-vstack", { gap: '0.5rem', padding: { top: '1rem', bottom: '1rem', left: '1rem', right: '1rem' }, border: { width: 1, style: 'solid', color: 'rgba(217,225,232,.38)', radius: 5 }, position: "relative" },
                 this.$render("i-icon", { name: "times", fill: "red", width: 20, height: 20, position: "absolute", top: 10, right: 10, class: config_css_1.pointerStyle, onClick: (source) => this.deleteItem(itemElm, lastIndex) }),
@@ -77,14 +67,21 @@ define("@feature/main/config.tsx", ["require", "exports", "@ijstech/components",
                     this.$render("i-label", { caption: "Name" }),
                     this.$render("i-label", { caption: "*", font: { color: 'red' }, margin: { left: '4px' } }),
                     this.$render("i-label", { caption: ":" })),
-                this.$render("i-input", { width: "100%", value: data.name || '', onChanged: (source) => this.updateList(source, lastIndex, 'name') }),
+                this.$render("i-input", { width: "100%", value: item.name || '', onChanged: (source) => this.updateList(source, lastIndex, 'name') }),
                 this.$render("i-label", { caption: "Description:" }),
-                this.$render("i-input", { class: config_css_1.textareaStyle, width: "100%", height: "auto", resize: "auto-grow", inputType: 'textarea', value: data.caption || '', onChanged: (source) => this.updateList(source, lastIndex, 'caption') }),
+                this.$render("i-input", { class: config_css_1.textareaStyle, width: "100%", height: "auto", resize: "auto-grow", inputType: 'textarea', value: item.caption || '', onChanged: (source) => this.updateList(source, lastIndex, 'caption') }),
                 this.$render("i-label", { caption: "Image:" }),
                 this.$render("i-panel", null,
-                    this.$render("i-upload", { maxHeight: 200, maxWidth: 200, class: config_css_1.uploadStyle, onChanged: (source) => this.updateList(source, lastIndex, 'img') }))));
+                    this.$render("i-upload", { maxHeight: 200, maxWidth: 200, class: config_css_1.uploadStyle, onChanged: (source) => this.updateList(source, lastIndex, 'img'), onRemoved: () => this.onRemoved(lastIndex) }))));
             this.listStack.appendChild(itemElm);
             this.itemMap.set(lastIndex, { name: '' });
+        }
+        onRemoved(index) {
+            if (this.itemMap.has(index)) {
+                const item = this.itemMap.get(index);
+                item.img = '';
+                this.itemMap.set(index, item);
+            }
         }
         deleteItem(source, index) {
             if (this.itemMap.has(index)) {
@@ -93,6 +90,7 @@ define("@feature/main/config.tsx", ["require", "exports", "@ijstech/components",
             }
         }
         updateList(source, index, prop) {
+            console.log('changed input');
             const item = this.itemMap.get(index);
             if (prop === 'img') {
                 const imgUploader = source.getElementsByTagName("img")[0];
@@ -201,34 +199,6 @@ define("@feature/main/index.css.ts", ["require", "exports", "@ijstech/components
     exports.centerStyle = components_3.Styles.style({
         textAlign: 'center'
     });
-});
-define("@feature/main/data.json.ts", ["require", "exports"], function (require, exports) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    ///<amd-module name='@feature/main/data.json.ts'/> 
-    const dataList = [
-        {
-            name: 'Feature 1',
-            caption: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed accumsan convallis ex, dapibus molestie erat pharetra id',
-            img: 'https://images.unsplash.com/photo-1612404730960-5c71577fca11?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8bWFyaW98ZW58MHwwfDB8fA%3D%3D&auto=format&fit=crop&w=600&q=60'
-        },
-        {
-            name: 'Feature 2',
-            caption: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed accumsan convallis ex, dapibus molestie erat pharetra id',
-            img: 'https://images.unsplash.com/photo-1612404730960-5c71577fca11?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8bWFyaW98ZW58MHwwfDB8fA%3D%3D&auto=format&fit=crop&w=600&q=60'
-        },
-        {
-            name: 'Feature 3',
-            caption: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed accumsan convallis ex, dapibus molestie erat pharetra id',
-            img: 'https://images.unsplash.com/photo-1612404730960-5c71577fca11?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8bWFyaW98ZW58MHwwfDB8fA%3D%3D&auto=format&fit=crop&w=600&q=60'
-        },
-        {
-            name: 'Feature 4',
-            caption: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed accumsan convallis ex, dapibus molestie erat pharetra id',
-            img: 'https://images.unsplash.com/photo-1612404730960-5c71577fca11?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8bWFyaW98ZW58MHwwfDB8fA%3D%3D&auto=format&fit=crop&w=600&q=60'
-        }
-    ];
-    exports.default = dataList;
 });
 define("@feature/main", ["require", "exports", "@ijstech/components", "@feature/main/config.tsx", "@feature/main/index.css.ts", "@feature/assets"], function (require, exports, components_4, config_1, index_css_1, assets_1) {
     "use strict";

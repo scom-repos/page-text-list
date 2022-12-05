@@ -8,7 +8,6 @@ import {
 import { PageBlock, IConfig } from '@feature/global';
 import Config from './config';
 import {cardItemStyle, cardStyle, controlStyle, imageStyle, centerStyle } from './index.css';
-import featureList from './data.json';
 import assets from '@feature/assets';
 export { Config };
 
