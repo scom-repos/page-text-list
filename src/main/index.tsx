@@ -3,13 +3,11 @@ import {
   customModule,
   Styles,
   Panel,
-  Label,
-  HStack,
-  CarouselSlider
+  Label
 } from '@ijstech/components';
 import { PageBlock, IConfig } from '@feature/global';
 import Config from './config';
-import {cardItemStyle, cardStyle, carouselStyle, controlStyle, imageStyle, centerStyle } from './index.css';
+import {cardItemStyle, cardStyle, controlStyle, imageStyle, centerStyle } from './index.css';
 import featureList from './data.json';
 import assets from '@feature/assets';
 export { Config };
@@ -79,8 +77,15 @@ export default class Main extends Module implements PageBlock {
   onUpdateBlock() {
     this.lblTitle.caption = this._data.title || ''
     this.lblDesc.caption = this._data.description || ''
-    const data = this._data.data?.length ? this._data.data : featureList;
-    this.renderList(data);
+    this.renderList(this._data.data || [])
+  }
+
+  private getItemPerRow(dataList: any[]) {
+    const length = dataList.length;
+    if (length === 1) return 1;
+    if (length % 3 === 0) return 3;
+    if (length % 2 === 0) return 2;
+    return 3;
   }
 
   renderList(dataList: any[]) {
@@ -90,7 +95,7 @@ export default class Main extends Module implements PageBlock {
         width='100%'
         padding={{ bottom: '1rem', left: '1rem', right: '1rem' }}
         gap={{ column: '1rem', row: '0.75rem' }}
-        columnsPerRow={3}
+        columnsPerRow={this.getItemPerRow(dataList)}
         cardMinWidth='250px'
       ></i-card-layout>
     )

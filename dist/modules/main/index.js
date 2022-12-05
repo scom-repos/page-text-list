@@ -38,7 +38,14 @@ define("@feature/main/config.tsx", ["require", "exports", "@ijstech/components",
     let Config = class Config extends components_2.Module {
         constructor() {
             super(...arguments);
-            this.itemList = [];
+            this.itemMap = new Map();
+            this._itemList = [];
+        }
+        get itemList() {
+            return Array.from(this.itemMap).map(item => item[1]);
+        }
+        set itemList(data) {
+            this._itemList = data;
         }
         get data() {
             const _data = {
@@ -51,8 +58,18 @@ define("@feature/main/config.tsx", ["require", "exports", "@ijstech/components",
         set data(config) {
             this.edtTitle.value = config.title || "";
             this.edtDesc.value = config.description || "";
+            this.itemMap = new Map();
+            this.itemList = config.data || [];
         }
-        addItem() {
+        renderList() {
+            this.listStack.clearInnerHTML();
+            if (this._itemList.length) {
+                this._itemList.forEach(item => {
+                    this.addItem(item);
+                });
+            }
+        }
+        addItem(data) {
             const lastIndex = this.itemList.length;
             const itemElm = (this.$render("i-vstack", { gap: '0.5rem', padding: { top: '1rem', bottom: '1rem', left: '1rem', right: '1rem' }, border: { width: 1, style: 'solid', color: 'rgba(217,225,232,.38)', radius: 5 }, position: "relative" },
                 this.$render("i-icon", { name: "times", fill: "red", width: 20, height: 20, position: "absolute", top: 10, right: 10, class: config_css_1.pointerStyle, onClick: (source) => this.deleteItem(itemElm, lastIndex) }),
@@ -60,24 +77,23 @@ define("@feature/main/config.tsx", ["require", "exports", "@ijstech/components",
                     this.$render("i-label", { caption: "Name" }),
                     this.$render("i-label", { caption: "*", font: { color: 'red' }, margin: { left: '4px' } }),
                     this.$render("i-label", { caption: ":" })),
-                this.$render("i-input", { width: "100%", onChanged: (source) => this.updateList(source, lastIndex, 'name') }),
+                this.$render("i-input", { width: "100%", value: data.name || '', onChanged: (source) => this.updateList(source, lastIndex, 'name') }),
                 this.$render("i-label", { caption: "Description:" }),
-                this.$render("i-input", { class: config_css_1.textareaStyle, width: "100%", height: "auto", resize: "auto-grow", inputType: 'textarea', onChanged: (source) => this.updateList(source, lastIndex, 'caption') }),
+                this.$render("i-input", { class: config_css_1.textareaStyle, width: "100%", height: "auto", resize: "auto-grow", inputType: 'textarea', value: data.caption || '', onChanged: (source) => this.updateList(source, lastIndex, 'caption') }),
                 this.$render("i-label", { caption: "Image:" }),
                 this.$render("i-panel", null,
                     this.$render("i-upload", { maxHeight: 200, maxWidth: 200, class: config_css_1.uploadStyle, onChanged: (source) => this.updateList(source, lastIndex, 'img') }))));
             this.listStack.appendChild(itemElm);
-            this.itemList[lastIndex] = { name: '' };
+            this.itemMap.set(lastIndex, { name: '' });
         }
         deleteItem(source, index) {
-            const item = this.itemList[index];
-            if (item) {
+            if (this.itemMap.has(index)) {
                 source.remove();
-                this.itemList.splice(index, 1);
+                this.itemMap.delete(index);
             }
         }
         updateList(source, index, prop) {
-            const item = this.itemList[index] || {};
+            const item = this.itemMap.get(index);
             if (prop === 'img') {
                 const imgUploader = source.getElementsByTagName("img")[0];
                 item.img = imgUploader.src || '';
@@ -214,7 +230,7 @@ define("@feature/main/data.json.ts", ["require", "exports"], function (require, 
     ];
     exports.default = dataList;
 });
-define("@feature/main", ["require", "exports", "@ijstech/components", "@feature/main/config.tsx", "@feature/main/index.css.ts", "@feature/main/data.json.ts", "@feature/assets"], function (require, exports, components_4, config_1, index_css_1, data_json_1, assets_1) {
+define("@feature/main", ["require", "exports", "@ijstech/components", "@feature/main/config.tsx", "@feature/main/index.css.ts", "@feature/assets"], function (require, exports, components_4, config_1, index_css_1, assets_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.Config = void 0;
@@ -264,15 +280,23 @@ define("@feature/main", ["require", "exports", "@ijstech/components", "@feature/
             return !emptyName;
         }
         onUpdateBlock() {
-            var _a;
             this.lblTitle.caption = this._data.title || '';
             this.lblDesc.caption = this._data.description || '';
-            const data = ((_a = this._data.data) === null || _a === void 0 ? void 0 : _a.length) ? this._data.data : data_json_1.default;
-            this.renderList(data);
+            this.renderList(this._data.data || []);
+        }
+        getItemPerRow(dataList) {
+            const length = dataList.length;
+            if (length === 1)
+                return 1;
+            if (length % 3 === 0)
+                return 3;
+            if (length % 2 === 0)
+                return 2;
+            return 3;
         }
         renderList(dataList) {
             this.pnlCardBody.clearInnerHTML();
-            const lytItems = (this.$render("i-card-layout", { width: '100%', padding: { bottom: '1rem', left: '1rem', right: '1rem' }, gap: { column: '1rem', row: '0.75rem' }, columnsPerRow: 3, cardMinWidth: '250px' }));
+            const lytItems = (this.$render("i-card-layout", { width: '100%', padding: { bottom: '1rem', left: '1rem', right: '1rem' }, gap: { column: '1rem', row: '0.75rem' }, columnsPerRow: this.getItemPerRow(dataList), cardMinWidth: '250px' }));
             this.pnlCardBody.appendChild(lytItems);
             dataList.forEach((product) => {
                 lytItems.append(this.$render("i-grid-layout", { width: '100%', height: '100%', class: index_css_1.cardItemStyle, gap: { column: '1rem', row: '2rem' }, templateAreas: [['areaImg'], ['areaDetails']] },
