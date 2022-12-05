@@ -1,0 +1,16 @@
+{
+  "name": "@feature/main",
+  "version": "0.1.0",
+  "env": "",
+  "moduleDir": "src",
+  "main": "@feature/main",
+  "modules": {
+    "@feature/main": {
+      "path": "main"
+    },
+    "@feature/global": {
+      "path": "global"
+    }
+  },
+  "dependencies": {}
+}
