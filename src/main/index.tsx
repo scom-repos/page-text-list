@@ -20,8 +20,6 @@ const Theme = Styles.Theme.ThemeVars;
 export default class Main extends Module implements PageBlock {
   private pnlCard: Panel
   private pnlCardBody: Panel
-  private pnlCardFooter: Panel
-  private pnlControls: HStack
   private lblTitle: Label
   private lblDesc: Label
   private cardConfig: Config
@@ -69,7 +67,14 @@ export default class Main extends Module implements PageBlock {
     this.cardConfig.visible = false
   }
 
-  async config() {}
+  async config() { }
+  
+  validate() {
+    const dataList = this._data.data;
+    if (!dataList.length) return true;
+    const emptyName = dataList.find(item => !item.name);
+    return !emptyName;
+  }
 
   onUpdateBlock() {
     this.lblTitle.caption = this._data.title || ''

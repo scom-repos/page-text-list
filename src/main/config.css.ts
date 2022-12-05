@@ -5,10 +5,6 @@ export const textareaStyle = Styles.style({
     'textarea': {
       border: 'none',
       outline: 'none'
-    },
-    '.i-upload_preview-img': {
-      maxHeight: '100%',
-      display: 'block'
     }
   }
 })
@@ -24,4 +20,8 @@ export const uploadStyle = Styles.style({
       overflow: 'hidden'
     }
   }
+})
+
+export const pointerStyle = Styles.style({
+  cursor: 'pointer'
 })

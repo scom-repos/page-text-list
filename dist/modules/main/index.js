@@ -7,30 +7,29 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 define("@feature/main/config.css.ts", ["require", "exports", "@ijstech/components"], function (require, exports, components_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    exports.imageStyle = exports.textareaStyle = void 0;
+    exports.pointerStyle = exports.uploadStyle = exports.textareaStyle = void 0;
     exports.textareaStyle = components_1.Styles.style({
         $nest: {
             'textarea': {
                 border: 'none',
                 outline: 'none'
-            },
-            '.i-upload_preview-img': {
-                maxHeight: '100%',
-                display: 'block'
             }
         }
     });
-    exports.imageStyle = components_1.Styles.style({
+    exports.uploadStyle = components_1.Styles.style({
         $nest: {
-            'i-upload .i-upload_preview-img': {
+            '.i-upload_preview-img': {
                 maxHeight: '100%',
                 display: 'block'
             },
-            'i-upload .i-upload-wrapper': {
+            '.i-upload-wrapper': {
                 maxHeight: 'inherit',
                 overflow: 'hidden'
             }
         }
+    });
+    exports.pointerStyle = components_1.Styles.style({
+        cursor: 'pointer'
     });
 });
 define("@feature/main/config.tsx", ["require", "exports", "@ijstech/components", "@feature/main/config.css.ts"], function (require, exports, components_2, config_css_1) {
@@ -52,20 +51,30 @@ define("@feature/main/config.tsx", ["require", "exports", "@ijstech/components",
         set data(config) {
             this.edtTitle.value = config.title || "";
             this.edtDesc.value = config.description || "";
-            console.log(config);
         }
         addItem() {
             const lastIndex = this.itemList.length;
-            const itemElm = (this.$render("i-vstack", { gap: '0.5rem', padding: { top: '1rem', bottom: '1rem', left: '1rem', right: '1rem' }, border: { width: 1, style: 'solid', color: 'rgba(217,225,232,.38)', radius: 5 } },
-                this.$render("i-label", { caption: "Name:" }),
+            const itemElm = (this.$render("i-vstack", { gap: '0.5rem', padding: { top: '1rem', bottom: '1rem', left: '1rem', right: '1rem' }, border: { width: 1, style: 'solid', color: 'rgba(217,225,232,.38)', radius: 5 }, position: "relative" },
+                this.$render("i-icon", { name: "times", fill: "red", width: 20, height: 20, position: "absolute", top: 10, right: 10, class: config_css_1.pointerStyle, onClick: (source) => this.deleteItem(itemElm, lastIndex) }),
+                this.$render("i-hstack", null,
+                    this.$render("i-label", { caption: "Name" }),
+                    this.$render("i-label", { caption: "*", font: { color: 'red' }, margin: { left: '4px' } }),
+                    this.$render("i-label", { caption: ":" })),
                 this.$render("i-input", { width: "100%", onChanged: (source) => this.updateList(source, lastIndex, 'name') }),
                 this.$render("i-label", { caption: "Description:" }),
                 this.$render("i-input", { class: config_css_1.textareaStyle, width: "100%", height: "auto", resize: "auto-grow", inputType: 'textarea', onChanged: (source) => this.updateList(source, lastIndex, 'caption') }),
-                this.$render("i-label", { caption: "Logo:" }),
+                this.$render("i-label", { caption: "Image:" }),
                 this.$render("i-panel", null,
-                    this.$render("i-upload", { maxHeight: 200, maxWidth: 200, class: config_css_1.imageStyle, onChanged: (source) => this.updateList(source, lastIndex, 'img') }))));
+                    this.$render("i-upload", { maxHeight: 200, maxWidth: 200, class: config_css_1.uploadStyle, onChanged: (source) => this.updateList(source, lastIndex, 'img') }))));
             this.listStack.appendChild(itemElm);
             this.itemList[lastIndex] = { name: '' };
+        }
+        deleteItem(source, index) {
+            const item = this.itemList[index];
+            if (item) {
+                source.remove();
+                this.itemList.splice(index, 1);
+            }
         }
         updateList(source, index, prop) {
             const item = this.itemList[index] || {};
@@ -247,6 +256,13 @@ define("@feature/main", ["require", "exports", "@ijstech/components", "@feature/
             this.cardConfig.visible = false;
         }
         async config() { }
+        validate() {
+            const dataList = this._data.data;
+            if (!dataList.length)
+                return true;
+            const emptyName = dataList.find(item => !item.name);
+            return !emptyName;
+        }
         onUpdateBlock() {
             var _a;
             this.lblTitle.caption = this._data.title || '';
@@ -262,8 +278,8 @@ define("@feature/main", ["require", "exports", "@ijstech/components", "@feature/
                 lytItems.append(this.$render("i-grid-layout", { width: '100%', height: '100%', class: index_css_1.cardItemStyle, gap: { column: '1rem', row: '2rem' }, templateAreas: [['areaImg'], ['areaDetails']] },
                     this.$render("i-image", { class: index_css_1.imageStyle, width: 'auto', maxHeight: 100, padding: { top: '1rem', left: '1rem', right: '1rem' }, overflow: 'hidden', grid: { area: 'areaImg' }, url: product.img, fallbackUrl: assets_1.default.fullPath('img/placeholder.jpg') }),
                     this.$render("i-vstack", { gap: '0.5rem', grid: { area: 'areaDetails' }, padding: { left: '1rem', right: '1rem' }, class: index_css_1.centerStyle },
-                        this.$render("i-label", { caption: product.name, font: { weight: 600, size: '1.125rem' } }),
-                        this.$render("i-label", { caption: product.caption }))));
+                        this.$render("i-label", { caption: product.name || '', font: { weight: 600, size: '1.125rem' } }),
+                        this.$render("i-label", { caption: product.caption || '' }))));
             });
         }
         render() {

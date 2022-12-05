@@ -7,7 +7,7 @@ import {
   VStack,
   Control
 } from '@ijstech/components';
-import { textareaStyle, uploadStyle } from './config.css';
+import { textareaStyle, uploadStyle, pointerStyle } from './config.css';
 import { IConfig, IData } from '@feature/global';
 
 declare global {
@@ -38,7 +38,6 @@ export default class Config extends Module {
   set data(config: IConfig) {
     this.edtTitle.value = config.title || "";
     this.edtDesc.value = config.description || "";
-    console.log(config)
   }
 
   private addItem() {
@@ -48,8 +47,20 @@ export default class Config extends Module {
         gap='0.5rem'
         padding={{ top: '1rem', bottom: '1rem', left: '1rem', right: '1rem' }}
         border={{ width: 1, style: 'solid', color: 'rgba(217,225,232,.38)', radius: 5 }}
+        position="relative"
       >
-        <i-label caption="Name:"></i-label>
+        <i-icon
+          name="times" fill="red" width={20} height={20}
+          position="absolute"
+          top={10} right={10}
+          class={pointerStyle}
+          onClick={(source: Control) => this.deleteItem(itemElm, lastIndex)}
+        ></i-icon>
+        <i-hstack>
+          <i-label caption="Name"></i-label>
+          <i-label caption="*" font={{ color: 'red' }} margin={{left: '4px'}}></i-label>
+          <i-label caption=":"></i-label>
+        </i-hstack>
         <i-input width="100%" onChanged={(source: Control) => this.updateList(source, lastIndex, 'name')}></i-input>
         <i-label caption="Description:"></i-label>
         <i-input
@@ -60,7 +71,7 @@ export default class Config extends Module {
           inputType='textarea'
           onChanged={(source: Control) => this.updateList(source, lastIndex, 'caption')}
         ></i-input>
-        <i-label caption="Logo:"></i-label>
+        <i-label caption="Image:"></i-label>
         <i-panel>
           <i-upload
             maxHeight={200}
@@ -73,6 +84,14 @@ export default class Config extends Module {
     );
     this.listStack.appendChild(itemElm);
     this.itemList[lastIndex] = { name: '' };
+  }
+
+  private deleteItem(source: Control, index: number) {
+    const item = this.itemList[index];
+    if (item) {
+      source.remove();
+      this.itemList.splice(index, 1);
+    }
   }
 
   private updateList(source: Control, index: number, prop: 'name' | 'caption' | 'img') {
