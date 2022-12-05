@@ -5,6 +5,9 @@
   "moduleDir": "src",
   "main": "@feature/main",
   "modules": {
+    "@feature/assets": {
+      "path": "assets"
+    },
     "@feature/main": {
       "path": "main"
     },
