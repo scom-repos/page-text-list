@@ -8,3 +8,20 @@ export const textareaStyle = Styles.style({
     }
   }
 })
+
+export const uploadStyle = Styles.style({
+  $nest: {
+    '.i-upload_preview-img': {
+      maxHeight: '100%',
+      display: 'block'
+    },
+    '.i-upload-wrapper': {
+      maxHeight: 'inherit',
+      overflow: 'hidden'
+    }
+  }
+})
+
+export const pointerStyle = Styles.style({
+  cursor: 'pointer'
+})

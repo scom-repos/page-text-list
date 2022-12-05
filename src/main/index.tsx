@@ -9,8 +9,9 @@ import {
 } from '@ijstech/components';
 import { PageBlock, IConfig } from '@feature/global';
 import Config from './config';
-import { actionButtonStyle, cardItemStyle, cardStyle, carouselStyle, controlStyle, imageStyle, centerStyle } from './index.css';
+import {cardItemStyle, cardStyle, carouselStyle, controlStyle, imageStyle, centerStyle } from './index.css';
 import featureList from './data.json';
+import assets from '@feature/assets';
 export { Config };
 
 const Theme = Styles.Theme.ThemeVars;
@@ -19,8 +20,6 @@ const Theme = Styles.Theme.ThemeVars;
 export default class Main extends Module implements PageBlock {
   private pnlCard: Panel
   private pnlCardBody: Panel
-  private pnlCardFooter: Panel
-  private pnlControls: HStack
   private lblTitle: Label
   private lblDesc: Label
   private cardConfig: Config
@@ -68,36 +67,23 @@ export default class Main extends Module implements PageBlock {
     this.cardConfig.visible = false
   }
 
-  async config() {}
+  async config() { }
+  
+  validate() {
+    const dataList = this._data.data;
+    if (!dataList.length) return true;
+    const emptyName = dataList.find(item => !item.name);
+    return !emptyName;
+  }
 
   onUpdateBlock() {
     this.lblTitle.caption = this._data.title || ''
     this.lblDesc.caption = this._data.description || ''
-    this.renderList()
+    const data = this._data.data?.length ? this._data.data : featureList;
+    this.renderList(data);
   }
 
-  renderList() {
-    const dataList = this._data.itemsToShow
-      ? featureList.slice(0, this._data.itemsToShow)
-      : featureList
-    const type = this._data.type || 'horizontal-list'
-    this.pnlControls.clearInnerHTML()
-    switch (type) {
-      case 'horizontal-list':
-        this.renderHorizontalList(dataList)
-        this.renderViewAll()
-        break
-      case 'vertical-list':
-        this.renderVerticalList(dataList)
-        this.renderViewAll()
-        break
-      case 'carousel':
-        this.renderCarousel(dataList)
-        break
-    }
-  }
-
-  renderHorizontalList(dataList: any[]) {
+  renderList(dataList: any[]) {
     this.pnlCardBody.clearInnerHTML()
     const lytItems = (
       <i-card-layout
@@ -126,6 +112,7 @@ export default class Main extends Module implements PageBlock {
             overflow='hidden'
             grid={{ area: 'areaImg' }}
             url={product.img}
+            fallbackUrl={assets.fullPath('img/placeholder.jpg')}
           ></i-image>
           <i-vstack
             gap='0.5rem'
@@ -134,151 +121,14 @@ export default class Main extends Module implements PageBlock {
             class={centerStyle}
           >
             <i-label
-              caption={product.name}
+              caption={product.name || ''}
               font={{ weight: 600, size: '1.125rem' }}
             ></i-label>
-            <i-label caption={product.caption}></i-label>
+            <i-label caption={product.caption || ''}></i-label>
           </i-vstack>
         </i-grid-layout>
       )
     })
-  }
-
-  renderVerticalList(dataList: any[]) {
-    this.pnlCardBody.clearInnerHTML()
-    dataList.forEach((product) => {
-      this.pnlCardBody.append(
-        <i-grid-layout
-          width='100%'
-          height='100%'
-          class={cardItemStyle}
-          padding={{ top: '1rem', bottom: '1rem', left: '1rem', right: '1rem' }}
-          gap={{ column: '1rem', row: '2rem' }}
-          templateColumns={['150px', 'auto', 'min-content']}
-          templateAreas={[['areaImg', 'areaDetails']]}
-        >
-          <i-image
-            class={imageStyle}
-            width='100%'
-            height='100%'
-            overflow='hidden'
-            grid={{ area: 'areaImg' }}
-            url={product.img}
-          ></i-image>
-          <i-vstack
-            gap='0.5rem'
-            grid={{ area: 'areaDetails' }}
-            verticalAlignment='center'
-          >
-            <i-label
-              caption={product.name}
-              font={{ weight: 600, size: '1.125rem' }}
-            ></i-label>
-            <i-label caption={product.caption}></i-label>
-          </i-vstack>
-        </i-grid-layout>
-      )
-    })
-  }
-  
-  renderViewAll() {
-    this.pnlCardFooter.clearInnerHTML();
-    if (this._data.itemsToShow && this._data.itemsToShow < featureList.length) {
-      this.pnlCardFooter.appendChild(
-        <i-hstack
-          class="pointer"
-          width="100%"
-          height={45}
-          background={{ color: Theme.background.paper }}
-          border={{ top: { width: 1, style: 'solid', color: 'rgba(217,225,232,.38)' } }}
-          horizontalAlignment='center'
-          verticalAlignment='center'
-        >
-          <i-label
-            caption="View All"
-            font={{ size: '0.875rem', color: Theme.colors.primary.main, weight: 600 }}
-            link={{ href: this._data.viewAllUrl, target: "_self" }}
-          ></i-label>
-        </i-hstack>
-      )
-    }
-  }
-
-  renderCarousel(dataList: any[]) {
-    this.pnlCardBody.clearInnerHTML()
-    this.pnlCardFooter.clearInnerHTML()
-    const carousel = (
-      <i-carousel-slider
-        class={carouselStyle}
-        width='100%'
-        minHeight='200px'
-        slidesToShow={1}
-        swipe={true}
-      ></i-carousel-slider>
-    )
-    const items = dataList.map((product) => {
-      const item = (
-        <i-grid-layout
-          width='100%'
-          height='100%'
-          class={cardItemStyle}
-          horizontalAlignment='center'
-          padding={{ top: '1rem', bottom: '1rem', left: '1rem', right: '1rem' }}
-          gap={{ column: '1rem', row: '2rem' }}
-          templateAreas={[['areaImg'], ['areaDetails']]}
-        >
-          <i-image
-            class={imageStyle}
-            width='auto'
-            maxHeight={100}
-            overflow='hidden'
-            grid={{ area: 'areaImg' }}
-            url={product.img}
-          ></i-image>
-          <i-vstack
-            gap='0.5rem'
-            grid={{ area: 'areaDetails' }}
-            class={centerStyle}
-          >
-            <i-label
-              caption={product.name}
-              font={{ weight: 600, size: '1.125rem' }}
-            ></i-label>
-            <i-label caption={product.caption}></i-label>
-          </i-vstack>
-        </i-grid-layout>
-      )
-      return {
-        name: undefined,
-        controls: [item],
-      }
-    })
-    this.pnlCardBody.append(carousel)
-    carousel.items = items
-    if (dataList.length > 1) this.renderControls(carousel)
-  }
-
-  renderControls(carousel: CarouselSlider) {
-    this.pnlControls.appendChild(
-      <i-button
-        width={45}
-        height={45}
-        icon={{ name: 'chevron-left', fill: 'rgba(160,168,177,.68)' }}
-        background={{ color: 'transparent' }}
-        border={{ width: 1, style: 'solid', color: 'rgba(217,225,232,.38)' }}
-        onClick={() => carousel.prev()}
-      ></i-button>
-    )
-    this.pnlControls.appendChild(
-      <i-button
-        width={45}
-        height={45}
-        icon={{ name: 'chevron-right', fill: 'rgba(160,168,177,.68)' }}
-        background={{ color: 'transparent' }}
-        border={{ width: 1, style: 'solid', color: 'rgba(217,225,232,.38)' }}
-        onClick={() => carousel.next()}
-      ></i-button>
-    )
   }
 
   render() {

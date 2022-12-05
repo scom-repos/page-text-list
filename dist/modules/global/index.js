@@ -11,21 +11,6 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
 define("@feature/global/utils.ts", ["require", "exports"], function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    exports.getCardTypeOption = void 0;
-    ///<amd-module name='@feature/global/utils.ts'/> 
-    const _cardTyps = ["horizontal-list", "vertical-list", "carousel"];
-    const getCardTypeOption = () => {
-        return _cardTyps.map(type => {
-            const label = type.replace(/(-|^)([^-]?)/g, function (_, prep, letter) {
-                return (prep && ' ') + letter.toUpperCase();
-            });
-            return {
-                label,
-                value: type
-            };
-        });
-    };
-    exports.getCardTypeOption = getCardTypeOption;
 });
 define("@feature/global", ["require", "exports", "@feature/global/utils.ts"], function (require, exports, utils_1) {
     "use strict";

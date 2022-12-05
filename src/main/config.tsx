@@ -3,12 +3,12 @@ import {
   customModule,
   customElements,
   ControlElement,
-  Styles,
   Input,
-  ComboBox
+  VStack,
+  Control
 } from '@ijstech/components';
-import { textareaStyle } from './config.css';
-import { getCardTypeOption, IConfig, ICardTypeOption } from '@feature/global';
+import { textareaStyle, uploadStyle, pointerStyle } from './config.css';
+import { IConfig, IData } from '@feature/global';
 
 declare global {
   namespace JSX {
@@ -23,39 +23,88 @@ declare global {
 export default class Config extends Module {
   private edtTitle: Input;
   private edtDesc: Input;
-  private edtItemsToShow: Input;
-  // private edtContract: Input;
-  // private edtViewAllUrl: Input;
-  private cbCardType: ComboBox;
-  private _items: ICardTypeOption[];
+  private listStack: VStack;
+  private itemList: IData[] = [];
 
   get data() {
-    const selectedItem = this.cbCardType.selectedItem as ICardTypeOption;
     const _data: IConfig = {
       title: this.edtTitle.value || "",
       description: this.edtDesc.value || "",
-      // contractEntrypoint: this.edtContract.value || "",
-      // viewAllUrl: this.edtViewAllUrl.value || ""
+      data: this.itemList || []
     };
-    if (selectedItem) _data.type = selectedItem.value;
-    const itemsToShow = Number(this.edtItemsToShow.value);
-    if (Number.isInteger(itemsToShow)) _data.itemsToShow = itemsToShow;
     return _data
   }
 
   set data(config: IConfig) {
     this.edtTitle.value = config.title || "";
     this.edtDesc.value = config.description || "";
-    // this.edtContract.value = config.contractEntrypoint || "";
-    this.cbCardType.clear();
-    const type = this._items.find(type => type.value === config.type);
-    if (type) this.cbCardType.selectedItem = type;
-    this.edtItemsToShow.value = config.itemsToShow || "";
-    // this.edtViewAllUrl.value = config.viewAllUrl || "";
+  }
+
+  private addItem() {
+    const lastIndex = this.itemList.length;
+    const itemElm = (
+      <i-vstack
+        gap='0.5rem'
+        padding={{ top: '1rem', bottom: '1rem', left: '1rem', right: '1rem' }}
+        border={{ width: 1, style: 'solid', color: 'rgba(217,225,232,.38)', radius: 5 }}
+        position="relative"
+      >
+        <i-icon
+          name="times" fill="red" width={20} height={20}
+          position="absolute"
+          top={10} right={10}
+          class={pointerStyle}
+          onClick={(source: Control) => this.deleteItem(itemElm, lastIndex)}
+        ></i-icon>
+        <i-hstack>
+          <i-label caption="Name"></i-label>
+          <i-label caption="*" font={{ color: 'red' }} margin={{left: '4px'}}></i-label>
+          <i-label caption=":"></i-label>
+        </i-hstack>
+        <i-input width="100%" onChanged={(source: Control) => this.updateList(source, lastIndex, 'name')}></i-input>
+        <i-label caption="Description:"></i-label>
+        <i-input
+          class={textareaStyle}
+          width="100%"
+          height="auto"
+          resize="auto-grow"
+          inputType='textarea'
+          onChanged={(source: Control) => this.updateList(source, lastIndex, 'caption')}
+        ></i-input>
+        <i-label caption="Image:"></i-label>
+        <i-panel>
+          <i-upload
+            maxHeight={200}
+            maxWidth={200}
+            class={uploadStyle}
+            onChanged={(source: Control) => this.updateList(source, lastIndex, 'img')}
+          ></i-upload>
+        </i-panel>
+      </i-vstack>
+    );
+    this.listStack.appendChild(itemElm);
+    this.itemList[lastIndex] = { name: '' };
+  }
+
+  private deleteItem(source: Control, index: number) {
+    const item = this.itemList[index];
+    if (item) {
+      source.remove();
+      this.itemList.splice(index, 1);
+    }
+  }
+
+  private updateList(source: Control, index: number, prop: 'name' | 'caption' | 'img') {
+    const item: any = this.itemList[index] || {};
+    if (prop === 'img') {
+      const imgUploader = source.getElementsByTagName("img")[0];
+      item.img = imgUploader.src || '';
+    } else {
+      item[prop] = (source as Input).value;
+    }
   }
 
   init() {
-    this._items = getCardTypeOption();
     super.init();
   }
 
@@ -73,19 +122,14 @@ export default class Config extends Module {
           resize="auto-grow"
           inputType='textarea'
         ></i-input>
-        <i-label caption="Card Type:"></i-label>
-        <i-combo-box
-          id="cbCardType"
-          width="100%"
-          icon={{ name: 'angle-down' }}
-          items={this._items}
-        ></i-combo-box>
-        <i-label caption="Max items to show:"></i-label>
-        <i-input id="edtItemsToShow" width="100%" inputType='number'></i-input>
-        {/* <i-label caption="Contract Entrypoint:"></i-label>
-        <i-input id="edtContract" width="100%"></i-input> */}
-        {/* <i-label caption="View all link:"></i-label>
-        <i-input id="edtViewAllUrl" width="100%"></i-input> */}
+        <i-panel>
+          <i-button
+            caption="Add Item"
+            padding={{ left: '1rem', right: '1rem', top: '0.5rem', bottom: '0.5rem' }}
+            onClick={this.addItem.bind(this)}
+          ></i-button>
+        </i-panel>
+        <i-vstack id="listStack" gap="0.5rem"></i-vstack>
       </i-vstack>
     )
   }
