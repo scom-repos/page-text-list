@@ -62,6 +62,7 @@ export default class Config extends Module {
         maxHeight={200}
         maxWidth={200}
         class={uploadStyle}
+        fileList={item?.file ? [item.file] : [] }
         onChanged={(source: Control, files: File[]) => this.updateList(source, lastIndex, 'img', files)}
         onRemoved={() => this.onRemovedImage(lastIndex)}
       ></i-upload>
@@ -102,13 +103,8 @@ export default class Config extends Module {
         </i-panel>
       </i-vstack>
     );
-    // if (item?.file) {
-    //   const fileInput = uploadElm.querySelector('input[type="file"]');
-    //   const dataTransfer = new DataTransfer();
-    //   dataTransfer.items.add(item.file);
-    //   fileInput.files = dataTransfer.files;
-    //   console.log(fileInput)
-    // }
+    if (item?.img)
+      uploadElm.preview(item?.img);
     this.listStack.appendChild(itemElm);
     this.itemMap.set(lastIndex, item ||  { name: '' });
   }
@@ -116,7 +112,8 @@ export default class Config extends Module {
   private onRemovedImage(index: number) {
     if (this.itemMap.has(index)) {
       const item = this.itemMap.get(index);
-      item.img = '';
+      delete item.img;
+      item.file = undefined;
       this.itemMap.set(index, item);
     }
   }
@@ -129,11 +126,10 @@ export default class Config extends Module {
   }
 
   private async updateList(source: Control, index: number, prop: 'name' | 'caption' | 'img', files?: File[]) {
-    console.log('change file')
     const item: any = this.itemMap.get(index);
     if (prop === 'img') {
       const uploadElm = source as Upload;
-      item.img = files ? await uploadElm.toBase64(files[0]) : '';
+      item.img = files ? await uploadElm.toBase64(files[0]) : undefined;
       item.file = files[0];
     } else {
       item[prop] = (source as Input).value;

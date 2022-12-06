@@ -67,7 +67,7 @@ define("@feature/main/config.tsx", ["require", "exports", "@ijstech/components",
         }
         addItem(item) {
             const lastIndex = this.itemList.length;
-            const uploadElm = (this.$render("i-upload", { maxHeight: 200, maxWidth: 200, class: config_css_1.uploadStyle, onChanged: (source, files) => this.updateList(source, lastIndex, 'img', files), onRemoved: () => this.onRemovedImage(lastIndex) }));
+            const uploadElm = (this.$render("i-upload", { maxHeight: 200, maxWidth: 200, class: config_css_1.uploadStyle, fileList: (item === null || item === void 0 ? void 0 : item.file) ? [item.file] : [], onChanged: (source, files) => this.updateList(source, lastIndex, 'img', files), onRemoved: () => this.onRemovedImage(lastIndex) }));
             const itemElm = (this.$render("i-vstack", { gap: '0.5rem', padding: { top: '1rem', bottom: '1rem', left: '1rem', right: '1rem' }, border: { width: 1, style: 'solid', color: 'rgba(217,225,232,.38)', radius: 5 }, position: "relative" },
                 this.$render("i-icon", { name: "times", fill: "red", width: 20, height: 20, position: "absolute", top: 10, right: 10, class: config_css_1.pointerStyle, onClick: (source) => this.deleteItem(itemElm, lastIndex) }),
                 this.$render("i-hstack", null,
@@ -79,20 +79,16 @@ define("@feature/main/config.tsx", ["require", "exports", "@ijstech/components",
                 this.$render("i-input", { class: config_css_1.textareaStyle, width: "100%", height: "auto", resize: "auto-grow", inputType: 'textarea', value: (item === null || item === void 0 ? void 0 : item.caption) || '', onChanged: (source) => this.updateList(source, lastIndex, 'caption') }),
                 this.$render("i-label", { caption: "Image:" }),
                 this.$render("i-panel", null, uploadElm)));
-            if (item === null || item === void 0 ? void 0 : item.file) {
-                const fileInput = uploadElm.querySelector('input[type="file"]');
-                const dataTransfer = new DataTransfer();
-                dataTransfer.items.add(item.file);
-                fileInput.files = dataTransfer.files;
-                console.log(fileInput);
-            }
+            if (item === null || item === void 0 ? void 0 : item.img)
+                uploadElm.preview(item === null || item === void 0 ? void 0 : item.img);
             this.listStack.appendChild(itemElm);
             this.itemMap.set(lastIndex, item || { name: '' });
         }
         onRemovedImage(index) {
             if (this.itemMap.has(index)) {
                 const item = this.itemMap.get(index);
-                item.img = '';
+                delete item.img;
+                item.file = undefined;
                 this.itemMap.set(index, item);
             }
         }
@@ -103,11 +99,10 @@ define("@feature/main/config.tsx", ["require", "exports", "@ijstech/components",
             }
         }
         async updateList(source, index, prop, files) {
-            console.log('change file');
             const item = this.itemMap.get(index);
             if (prop === 'img') {
                 const uploadElm = source;
-                item.img = files ? await uploadElm.toBase64(files[0]) : '';
+                item.img = files ? await uploadElm.toBase64(files[0]) : undefined;
                 item.file = files[0];
             }
             else {
@@ -231,7 +226,6 @@ define("@feature/main", ["require", "exports", "@ijstech/components", "@feature/
         }
         async setData(data) {
             this._data = data;
-            console.log('set data', data);
             this.cardConfig.data = data;
             this.onUpdateBlock();
         }
@@ -247,7 +241,6 @@ define("@feature/main", ["require", "exports", "@ijstech/components", "@feature/
             this.cardConfig.visible = true;
         }
         async confirm() {
-            console.log('confirm', this.cardConfig.data);
             this._data = this.cardConfig.data;
             this.onUpdateBlock();
             this.pnlCard.visible = true;
