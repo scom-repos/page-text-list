@@ -24,7 +24,15 @@ export default class Config extends Module {
   private edtTitle: Input;
   private edtDesc: Input;
   private listStack: VStack;
-  private itemList: IData[] = [];
+  private itemMap: Map<number, IData> = new Map();
+  private _itemList: IData[] = [];
+
+  get itemList() {
+    return Array.from(this.itemMap).map(item => item[1]);
+  }
+  set itemList(data: IData[]) {
+    this._itemList = data;
+  }
 
   get data() {
     const _data: IConfig = {
@@ -40,7 +48,7 @@ export default class Config extends Module {
     this.edtDesc.value = config.description || "";
   }
 
-  private addItem() {
+  private addItem(item?: IData) {
     const lastIndex = this.itemList.length;
     const itemElm = (
       <i-vstack
@@ -61,7 +69,7 @@ export default class Config extends Module {
           <i-label caption="*" font={{ color: 'red' }} margin={{left: '4px'}}></i-label>
           <i-label caption=":"></i-label>
         </i-hstack>
-        <i-input width="100%" onChanged={(source: Control) => this.updateList(source, lastIndex, 'name')}></i-input>
+        <i-input width="100%" value={item.name || ''} onChanged={(source: Control) => this.updateList(source, lastIndex, 'name')}></i-input>
         <i-label caption="Description:"></i-label>
         <i-input
           class={textareaStyle}
@@ -69,6 +77,7 @@ export default class Config extends Module {
           height="auto"
           resize="auto-grow"
           inputType='textarea'
+          value={item.caption || ''}
           onChanged={(source: Control) => this.updateList(source, lastIndex, 'caption')}
         ></i-input>
         <i-label caption="Image:"></i-label>
@@ -78,24 +87,32 @@ export default class Config extends Module {
             maxWidth={200}
             class={uploadStyle}
             onChanged={(source: Control) => this.updateList(source, lastIndex, 'img')}
+            onRemoved={() => this.onRemoved(lastIndex)}
           ></i-upload>
         </i-panel>
       </i-vstack>
     );
     this.listStack.appendChild(itemElm);
-    this.itemList[lastIndex] = { name: '' };
+    this.itemMap.set(lastIndex, { name: '' });
+  }
+
+  private onRemoved(index: number) {
+    if (this.itemMap.has(index)) {
+      const item = this.itemMap.get(index);
+      item.img = '';
+      this.itemMap.set(index, item);
+    }
   }
 
   private deleteItem(source: Control, index: number) {
-    const item = this.itemList[index];
-    if (item) {
+    if (this.itemMap.has(index)) {
       source.remove();
-      this.itemList.splice(index, 1);
+      this.itemMap.delete(index);
     }
   }
 
   private updateList(source: Control, index: number, prop: 'name' | 'caption' | 'img') {
-    const item: any = this.itemList[index] || {};
+    const item: any = this.itemMap.get(index);
     if (prop === 'img') {
       const imgUploader = source.getElementsByTagName("img")[0];
       item.img = imgUploader.src || '';
