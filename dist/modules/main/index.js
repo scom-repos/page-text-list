@@ -90,7 +90,6 @@ define("@feature/main/config.tsx", ["require", "exports", "@ijstech/components",
             }
         }
         updateList(source, index, prop) {
-            console.log('changed input');
             const item = this.itemMap.get(index);
             if (prop === 'img') {
                 const imgUploader = source.getElementsByTagName("img")[0];
