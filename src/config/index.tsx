@@ -14,13 +14,13 @@ import { IConfig, IData } from '@feature/global';
 declare global {
   namespace JSX {
     interface IntrinsicElements {
-      ['pageblock-card-config']: ControlElement;
+      ['pageblock-feature-config']: ControlElement;
     }
   }
 }
 
 @customModule
-@customElements("pageblock-card-config")
+@customElements("pageblock-feature-config")
 export default class Config extends Module {
   private edtTitle: Input;
   private edtDesc: Input;

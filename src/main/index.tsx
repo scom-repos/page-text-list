@@ -6,7 +6,7 @@ import {
   Label
 } from '@ijstech/components';
 import { PageBlock, IConfig } from '@feature/global';
-import Config from './config';
+import Config from '@feature/config';
 import {cardItemStyle, cardStyle, controlStyle, imageStyle, centerStyle } from './index.css';
 import assets from '@feature/assets';
 export { Config };
@@ -169,10 +169,10 @@ export default class Main extends Module implements PageBlock {
           <i-panel id='pnlCardBody'></i-panel>
           <i-panel id='pnlCardFooter'></i-panel>
         </i-panel>
-        <pageblock-card-config
+        <pageblock-feature-config
           id='cardConfig'
           visible={false}
-        ></pageblock-card-config>
+        ></pageblock-feature-config>
       </i-panel>
     )
   }
