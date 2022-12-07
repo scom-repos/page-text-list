@@ -13,12 +13,19 @@
             "path": "main",
             "dependencies": [
                 "@feature/global",
+                "@feature/config",
                 "@feature/assets"
             ]
         },
         "@feature/global": {
             "path": "global",
             "dependencies": []
+        },
+        "@feature/config": {
+            "path": "config",
+            "dependencies": [
+                "@feature/global"
+            ]
         }
     },
     "dependencies": {}

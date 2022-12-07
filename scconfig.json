@@ -13,6 +13,9 @@
     },
     "@feature/global": {
       "path": "global"
+    },
+    "@feature/config": {
+      "path": "config"
     }
   },
   "dependencies": {}
