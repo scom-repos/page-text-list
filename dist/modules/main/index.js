@@ -252,7 +252,8 @@ define("@feature/main", ["require", "exports", "@ijstech/components", "@feature/
         }
         async config() { }
         validate() {
-            const dataList = this._data.data;
+            var _a;
+            const dataList = (_a = this.cardConfig.data) === null || _a === void 0 ? void 0 : _a.data;
             if (!dataList.length)
                 return true;
             const emptyName = dataList.find(item => !item.name);
