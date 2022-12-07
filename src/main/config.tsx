@@ -5,7 +5,8 @@ import {
   ControlElement,
   Input,
   VStack,
-  Control
+  Control,
+  Upload
 } from '@ijstech/components';
 import { textareaStyle, uploadStyle, pointerStyle } from './config.css';
 import { IConfig, IData } from '@feature/global';
@@ -46,10 +47,26 @@ export default class Config extends Module {
   set data(config: IConfig) {
     this.edtTitle.value = config.title || "";
     this.edtDesc.value = config.description || "";
+    this.itemList = config.data || [];
+    this.listStack.clearInnerHTML();
+    this.itemMap = new Map();
+    this._itemList.forEach(item => {
+      this.addItem(item);
+    })
   }
 
   private addItem(item?: IData) {
     const lastIndex = this.itemList.length;
+    const uploadElm = (
+      <i-upload
+        maxHeight={200}
+        maxWidth={200}
+        class={uploadStyle}
+        fileList={item?.file ? [item.file] : [] }
+        onChanged={(source: Control, files: File[]) => this.updateList(source, lastIndex, 'img', files)}
+        onRemoved={() => this.onRemovedImage(lastIndex)}
+      ></i-upload>
+    );
     const itemElm = (
       <i-vstack
         gap='0.5rem'
@@ -69,7 +86,7 @@ export default class Config extends Module {
           <i-label caption="*" font={{ color: 'red' }} margin={{left: '4px'}}></i-label>
           <i-label caption=":"></i-label>
         </i-hstack>
-        <i-input width="100%" value={item.name || ''} onChanged={(source: Control) => this.updateList(source, lastIndex, 'name')}></i-input>
+        <i-input width="100%" value={item?.name || ''} onChanged={(source: Control) => this.updateList(source, lastIndex, 'name')}></i-input>
         <i-label caption="Description:"></i-label>
         <i-input
           class={textareaStyle}
@@ -77,29 +94,26 @@ export default class Config extends Module {
           height="auto"
           resize="auto-grow"
           inputType='textarea'
-          value={item.caption || ''}
+          value={item?.caption || ''}
           onChanged={(source: Control) => this.updateList(source, lastIndex, 'caption')}
         ></i-input>
         <i-label caption="Image:"></i-label>
         <i-panel>
-          <i-upload
-            maxHeight={200}
-            maxWidth={200}
-            class={uploadStyle}
-            onChanged={(source: Control) => this.updateList(source, lastIndex, 'img')}
-            onRemoved={() => this.onRemoved(lastIndex)}
-          ></i-upload>
+          { uploadElm }
         </i-panel>
       </i-vstack>
     );
+    if (item?.img)
+      uploadElm.preview(item?.img);
     this.listStack.appendChild(itemElm);
-    this.itemMap.set(lastIndex, { name: '' });
+    this.itemMap.set(lastIndex, item ||  { name: '' });
   }
 
-  private onRemoved(index: number) {
+  private onRemovedImage(index: number) {
     if (this.itemMap.has(index)) {
       const item = this.itemMap.get(index);
-      item.img = '';
+      delete item.img;
+      item.file = undefined;
       this.itemMap.set(index, item);
     }
   }
@@ -111,11 +125,12 @@ export default class Config extends Module {
     }
   }
 
-  private updateList(source: Control, index: number, prop: 'name' | 'caption' | 'img') {
+  private async updateList(source: Control, index: number, prop: 'name' | 'caption' | 'img', files?: File[]) {
     const item: any = this.itemMap.get(index);
     if (prop === 'img') {
-      const imgUploader = source.getElementsByTagName("img")[0];
-      item.img = imgUploader.src || '';
+      const uploadElm = source as Upload;
+      item.img = files ? await uploadElm.toBase64(files[0]) : undefined;
+      item.file = files[0];
     } else {
       item[prop] = (source as Input).value;
     }
@@ -143,7 +158,7 @@ export default class Config extends Module {
           <i-button
             caption="Add Item"
             padding={{ left: '1rem', right: '1rem', top: '0.5rem', bottom: '0.5rem' }}
-            onClick={this.addItem.bind(this)}
+            onClick={() => this.addItem()}
           ></i-button>
         </i-panel>
         <i-vstack id="listStack" gap="0.5rem"></i-vstack>

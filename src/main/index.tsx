@@ -67,7 +67,7 @@ export default class Main extends Module implements PageBlock {
   async config() { }
   
   validate() {
-    const dataList = this._data.data;
+    const dataList = this.cardConfig.data?.data;
     if (!dataList.length) return true;
     const emptyName = dataList.find(item => !item.name);
     return !emptyName;

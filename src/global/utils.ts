@@ -1,7 +1,8 @@
 interface IData {
   name: string,
   caption?: string,
-  img?: string
+  img?: string,
+  file?: File
 }
 
 interface IConfig {
