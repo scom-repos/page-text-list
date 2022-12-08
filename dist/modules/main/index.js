@@ -139,16 +139,6 @@ define("@feature/main", ["require", "exports", "@ijstech/components", "@feature/
             this.lblDesc.caption = this._data.description || '';
             this.renderList(this._data.data || []);
         }
-        getItemPerRow(dataList) {
-            const length = dataList.length;
-            if (length === 1)
-                return 1;
-            if (length % 3 === 0)
-                return 3;
-            if (length % 2 === 0)
-                return 2;
-            return 3;
-        }
         renderList(dataList) {
             this.pnlCardBody.clearInnerHTML();
             const lytItems = (this.$render("i-card-layout", { width: '100%', padding: { bottom: '1rem', left: '1rem', right: '1rem' }, gap: { column: '1rem', row: '0.75rem' }, columnsPerRow: this._data.columnsPerRow, cardMinWidth: '250px' }));

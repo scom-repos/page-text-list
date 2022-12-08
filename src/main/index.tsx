@@ -79,14 +79,6 @@ export default class Main extends Module implements PageBlock {
     this.renderList(this._data.data || [])
   }
 
-  private getItemPerRow(dataList: any[]) {
-    const length = dataList.length;
-    if (length === 1) return 1;
-    if (length % 3 === 0) return 3;
-    if (length % 2 === 0) return 2;
-    return 3;
-  }
-
   renderList(dataList: any[]) {
     this.pnlCardBody.clearInnerHTML()
     const lytItems = (

@@ -66,9 +66,7 @@ define("@feature/config", ["require", "exports", "@ijstech/components", "@featur
             this.itemList = config.data || [];
             this.listStack.clearInnerHTML();
             this.itemMap = new Map();
-            this._itemList.forEach(item => {
-                this.addItem(item);
-            });
+            this._itemList.forEach(item => this.addItem(item));
         }
         addItem(item) {
             const lastIndex = this.itemList.length;
