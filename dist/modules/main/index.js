@@ -151,7 +151,7 @@ define("@feature/main", ["require", "exports", "@ijstech/components", "@feature/
         }
         renderList(dataList) {
             this.pnlCardBody.clearInnerHTML();
-            const lytItems = (this.$render("i-card-layout", { width: '100%', padding: { bottom: '1rem', left: '1rem', right: '1rem' }, gap: { column: '1rem', row: '0.75rem' }, columnsPerRow: this.getItemPerRow(dataList), cardMinWidth: '250px' }));
+            const lytItems = (this.$render("i-card-layout", { width: '100%', padding: { bottom: '1rem', left: '1rem', right: '1rem' }, gap: { column: '1rem', row: '0.75rem' }, columnsPerRow: this._data.columnsPerRow, cardMinWidth: '250px' }));
             this.pnlCardBody.appendChild(lytItems);
             dataList.forEach((product) => {
                 lytItems.append(this.$render("i-grid-layout", { width: '100%', height: '100%', class: index_css_1.cardItemStyle, gap: { column: '1rem', row: '2rem' }, templateAreas: [['areaImg'], ['areaDetails']] },
