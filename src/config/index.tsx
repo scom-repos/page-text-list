@@ -24,6 +24,7 @@ declare global {
 export default class Config extends Module {
   private edtTitle: Input;
   private edtDesc: Input;
+  private edtColumnsPerRow: Input;
   private listStack: VStack;
   private itemMap: Map<number, IData> = new Map();
   private _itemList: IData[] = [];
@@ -39,20 +40,22 @@ export default class Config extends Module {
     const _data: IConfig = {
       title: this.edtTitle.value || "",
       description: this.edtDesc.value || "",
+      columnsPerRow: 3,
       data: this.itemList || []
     };
+    const columnsPerRow = Number(this.edtColumnsPerRow.value);
+    if (Number.isInteger(columnsPerRow)) _data.columnsPerRow = columnsPerRow;
     return _data
   }
 
   set data(config: IConfig) {
     this.edtTitle.value = config.title || "";
     this.edtDesc.value = config.description || "";
+    this.edtColumnsPerRow.value = `${config.columnsPerRow || 3}`
     this.itemList = config.data || [];
     this.listStack.clearInnerHTML();
     this.itemMap = new Map();
-    this._itemList.forEach(item => {
-      this.addItem(item);
-    })
+    this._itemList.forEach(item => this.addItem(item));
   }
 
   private addItem(item?: IData) {
@@ -136,10 +139,6 @@ export default class Config extends Module {
     }
   }
 
-  init() {
-    super.init();
-  }
-
   render() {
     return (
       <i-vstack id="pnlConfig" gap='0.5rem' padding={{ top: '1rem', bottom: '1rem', left: '1rem', right: '1rem' }}>
@@ -154,6 +153,8 @@ export default class Config extends Module {
           resize="auto-grow"
           inputType='textarea'
         ></i-input>
+        <i-label caption="Columns Per Row:"></i-label>
+        <i-input id="edtColumnsPerRow" width="100%" inputType="number"></i-input>
         <i-panel>
           <i-button
             caption="Add Item"

@@ -94,7 +94,7 @@ export default class Main extends Module implements PageBlock {
         width='100%'
         padding={{ bottom: '1rem', left: '1rem', right: '1rem' }}
         gap={{ column: '1rem', row: '0.75rem' }}
-        columnsPerRow={this.getItemPerRow(dataList)}
+        columnsPerRow={this._data.columnsPerRow}
         cardMinWidth='250px'
       ></i-card-layout>
     )

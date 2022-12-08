@@ -6,6 +6,7 @@ interface IData {
 }
 
 interface IConfig {
+  columnsPerRow?: number;
   title?: string;
   description?: string;
   data?: IData[];

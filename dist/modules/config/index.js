@@ -51,13 +51,18 @@ define("@feature/config", ["require", "exports", "@ijstech/components", "@featur
             const _data = {
                 title: this.edtTitle.value || "",
                 description: this.edtDesc.value || "",
+                columnsPerRow: 3,
                 data: this.itemList || []
             };
+            const columnsPerRow = Number(this.edtColumnsPerRow.value);
+            if (Number.isInteger(columnsPerRow))
+                _data.columnsPerRow = columnsPerRow;
             return _data;
         }
         set data(config) {
             this.edtTitle.value = config.title || "";
             this.edtDesc.value = config.description || "";
+            this.edtColumnsPerRow.value = `${config.columnsPerRow || 3}`;
             this.itemList = config.data || [];
             this.listStack.clearInnerHTML();
             this.itemMap = new Map();
@@ -109,15 +114,14 @@ define("@feature/config", ["require", "exports", "@ijstech/components", "@featur
                 item[prop] = source.value;
             }
         }
-        init() {
-            super.init();
-        }
         render() {
             return (this.$render("i-vstack", { id: "pnlConfig", gap: '0.5rem', padding: { top: '1rem', bottom: '1rem', left: '1rem', right: '1rem' } },
                 this.$render("i-label", { caption: "Title:" }),
                 this.$render("i-input", { id: "edtTitle", width: "100%" }),
                 this.$render("i-label", { caption: "Description:" }),
                 this.$render("i-input", { id: "edtDesc", class: config_css_1.textareaStyle, width: "100%", height: "auto", resize: "auto-grow", inputType: 'textarea' }),
+                this.$render("i-label", { caption: "Columns Per Row:" }),
+                this.$render("i-input", { id: "edtColumnsPerRow", width: "100%", inputType: "number" }),
                 this.$render("i-panel", null,
                     this.$render("i-button", { caption: "Add Item", padding: { left: '1rem', right: '1rem', top: '0.5rem', bottom: '0.5rem' }, onClick: () => this.addItem() })),
                 this.$render("i-vstack", { id: "listStack", gap: "0.5rem" })));
