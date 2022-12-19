@@ -70,9 +70,7 @@ define("@feature/config", ["require", "exports", "@ijstech/components", "@featur
         }
         addItem(item) {
             const lastIndex = this.itemList.length;
-            const uploadElm = (this.$render("i-upload", { maxHeight: 200, maxWidth: 200, class: config_css_1.uploadStyle, 
-                // fileList={item?.file ? [item.file] : [] }
-                onChanged: (source, files) => this.updateList(source, lastIndex, 'img', files), onRemoved: () => this.onRemovedImage(lastIndex) }));
+            const uploadElm = (this.$render("i-upload", { maxHeight: 200, maxWidth: 200, class: config_css_1.uploadStyle, onChanged: (source, files) => this.updateList(source, lastIndex, 'img', files), onRemoved: () => this.onRemovedImage(lastIndex) }));
             const itemElm = (this.$render("i-vstack", { gap: '0.5rem', padding: { top: '1rem', bottom: '1rem', left: '1rem', right: '1rem' }, border: { width: 1, style: 'solid', color: 'rgba(217,225,232,.38)', radius: 5 }, position: "relative" },
                 this.$render("i-icon", { name: "times", fill: "red", width: 20, height: 20, position: "absolute", top: 10, right: 10, class: config_css_1.pointerStyle, onClick: (source) => this.deleteItem(itemElm, lastIndex) }),
                 this.$render("i-hstack", null,

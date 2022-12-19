@@ -21183,10 +21183,9 @@ var Upload = class extends Control {
       if (!this.isPreviewing || !this.enabled)
         return;
       event.stopPropagation();
-      const file = this._dt.files.length ? this._dt.files[0] : void 0;
-      console.log(this._dt.files, file);
+      const file = this._dt.files.length ? this._dt.files[0] : null;
       this.clear();
-      if (this.onRemoved)
+      if (this.onRemoved && file)
         this.onRemoved(this, file);
     };
     this.toBase64 = (file) => new Promise((resolve, reject) => {
