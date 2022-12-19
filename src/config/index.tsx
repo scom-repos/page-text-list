@@ -65,7 +65,6 @@ export default class Config extends Module {
         maxHeight={200}
         maxWidth={200}
         class={uploadStyle}
-        fileList={item?.file ? [item.file] : [] }
         onChanged={(source: Control, files: File[]) => this.updateList(source, lastIndex, 'img', files)}
         onRemoved={() => this.onRemovedImage(lastIndex)}
       ></i-upload>
@@ -116,7 +115,6 @@ export default class Config extends Module {
     if (this.itemMap.has(index)) {
       const item = this.itemMap.get(index);
       delete item.img;
-      item.file = undefined;
       this.itemMap.set(index, item);
     }
   }
@@ -133,7 +131,6 @@ export default class Config extends Module {
     if (prop === 'img') {
       const uploadElm = source as Upload;
       item.img = files ? await uploadElm.toBase64(files[0]) : undefined;
-      item.file = files[0];
     } else {
       item[prop] = (source as Input).value;
     }
