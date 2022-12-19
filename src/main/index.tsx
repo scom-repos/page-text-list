@@ -7,7 +7,7 @@ import {
 } from '@ijstech/components';
 import { PageBlock, IConfig } from '@feature/global';
 import Config from '@feature/config';
-import {cardItemStyle, cardStyle, controlStyle, imageStyle, centerStyle } from './index.css';
+import {cardItemStyle, cardStyle, controlStyle, imageStyle, centerStyle, containerStyle } from './index.css';
 import assets from '@feature/assets';
 export { Config };
 
@@ -130,7 +130,7 @@ export default class Main extends Module implements PageBlock {
   render() {
     return (
       <i-panel id='pnlBlock' class={cardStyle}>
-        <i-panel id='pnlCard'>
+        <i-panel id='pnlCard' class={containerStyle}>
           <i-hstack
             id='pnlCardHeader'
             verticalAlignment='center'
