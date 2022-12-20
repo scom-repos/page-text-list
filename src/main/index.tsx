@@ -5,23 +5,95 @@ import {
   Panel,
   Label
 } from '@ijstech/components';
-import { PageBlock, IConfig } from '@feature/global';
+import { PageBlock, IConfig, IData, ISettings } from '@feature/global';
 import Config from '@feature/config';
-import {cardItemStyle, cardStyle, controlStyle, imageStyle, centerStyle, containerStyle } from './index.css';
+import { cardItemStyle, cardStyle, controlStyle, imageStyle, centerStyle, containerStyle, linkStyle } from './index.css';
 import assets from '@feature/assets';
 export { Config };
 
 const Theme = Styles.Theme.ThemeVars;
 
+const configSchema = {
+  type: 'object',
+  required: [],
+  properties: {
+    'titleColor': {
+      type: 'string',
+      format: 'color',
+    },
+    'descriptionColor': {
+      type: 'string',
+      format: 'color',
+    },
+    'backgroundColor': {
+      type: 'string',
+      format: 'color',
+    },
+    'transparent': {
+      type: 'boolean',
+    },
+    'item': {
+      type: 'object',
+      properties: {
+        'itemTitleColor': {
+          type: 'string',
+          format: 'color',
+        },
+        'itemDescriptionColor': {
+          type: 'string',
+          format: 'color',
+        },
+        'itemLink': {
+          type: 'object',
+          properties: {
+            'itemLinkColor': {
+              type: 'string',
+              format: 'color',
+            },
+            'itemLinkBackgroundColor': {
+              type: 'string',
+              format: 'color',
+            },
+            'itemLinkTransparent': {
+              type: 'boolean',
+            }
+          },
+        },
+        'itemImage': {
+          type: 'object',
+          properties: {
+            'width': {
+              type: 'string',
+            },
+            'height': {
+              type: 'string',
+            },
+          },
+        },
+        'itemBackgroundColor': {
+          type: 'string',
+          format: 'color',
+        },
+        'itemTransparent': {
+          type: 'boolean',
+        }
+      }
+    },
+  }
+}
+
 @customModule
 export default class Main extends Module implements PageBlock {
   private pnlCard: Panel
   private pnlCardBody: Panel
+  private pnlDivider: Panel
   private lblTitle: Label
   private lblDesc: Label
   private cardConfig: Config
 
   private _data: IConfig = {}
+  private settings: ISettings = {}
+
   tag: any
   defaultEdit: boolean = true
   readonly onConfirm: () => Promise<void>
@@ -44,6 +116,7 @@ export default class Main extends Module implements PageBlock {
 
   async setTag(value: any) {
     this.tag = value
+    this.updateFeature(value)
   }
 
   async edit() {
@@ -65,18 +138,38 @@ export default class Main extends Module implements PageBlock {
   }
 
   async config() { }
-  
+
+  getConfigSchema() {
+    return configSchema
+  }
+
+  onConfigSave(config: any) {
+    this.tag = config
+    this.updateFeature(config)
+  }
+
+  updateFeature(config: any) {
+    this.settings = config
+    this.onUpdateBlock()
+  }
+
   validate() {
     const dataList = this.cardConfig.data?.data;
     if (!dataList.length) return true;
-    const emptyName = dataList.find(item => !item.name);
+    const emptyName = dataList.find(item => !item.title);
     return !emptyName;
   }
 
   onUpdateBlock() {
-    this.lblTitle.caption = this._data.title || ''
-    this.lblDesc.caption = this._data.description || ''
-    this.renderList(this._data.data || [])
+    if (this.settings?.backgroundColor) {
+      this.pnlCard.background = { color: this.settings.backgroundColor };
+    }
+    this.lblTitle.caption = this._data.title || '';
+    this.lblTitle.style.color = this.settings?.titleColor || '';
+    this.lblDesc.caption = this._data.description || '';
+    this.lblDesc.style.color = this.settings?.descriptionColor || '';
+    this.pnlDivider.visible = this._data.divider || false;
+    this.renderList(this._data.data || []);
   }
 
   renderList(dataList: any[]) {
@@ -91,25 +184,30 @@ export default class Main extends Module implements PageBlock {
       ></i-card-layout>
     )
     this.pnlCardBody.appendChild(lytItems)
-    dataList.forEach((product) => {
+    const settings = this.settings?.item || {};
+    dataList.forEach((product: IData) => {
       lytItems.append(
         <i-grid-layout
           width='100%'
           height='100%'
           class={cardItemStyle}
           gap={{ column: '1rem', row: '2rem' }}
-          templateAreas={[['areaImg'], ['areaDetails']]}
+          templateAreas={product.img ? [['areaImg'], ['areaDetails']] : [['areaDetails']]}
+          background={{ color: settings.itemTransparent ? 'transparent' : settings.itemBackgroundColor || '' }}
+          padding={{ top: 16, bottom: 16 }}
+          border={{ radius: 8 }}
         >
-          <i-image
+          {product.img ? <i-image
             class={imageStyle}
-            width='auto'
-            maxHeight={100}
+            width={settings.itemImage?.width || 'auto'}
+            maxHeight={settings.itemImage?.height || 100}
+            margin={{ left: settings.itemImage?.width ? 'auto' : 0, right: settings.itemImage?.width ? 'auto' : 0 }}
             padding={{ top: '1rem', left: '1rem', right: '1rem' }}
             overflow='hidden'
             grid={{ area: 'areaImg' }}
             url={product.img}
             fallbackUrl={assets.fullPath('img/placeholder.jpg')}
-          ></i-image>
+          ></i-image> : []}
           <i-vstack
             gap='0.5rem'
             grid={{ area: 'areaDetails' }}
@@ -117,10 +215,23 @@ export default class Main extends Module implements PageBlock {
             class={centerStyle}
           >
             <i-label
-              caption={product.name || ''}
-              font={{ weight: 600, size: '1.125rem' }}
+              caption={product.title || ''}
+              font={{ weight: 600, size: '1.125rem', color: settings.itemTitleColor || '' }}
             ></i-label>
-            <i-label caption={product.caption || ''}></i-label>
+            <i-panel height={2} visible={product.divider || false} width={200} maxWidth='100%' margin={{ bottom: 8, left: 'auto', right: 'auto' }} background={{ color: Theme.colors.primary.main }}></i-panel>
+            <i-label caption={product.description || ''} font={{ color: settings.itemDescriptionColor || '' }}></i-label>
+            {
+              product.link?.caption ?
+                <i-panel class={linkStyle}>
+                  <i-button
+                    caption={product.link.caption}
+                    font={{ color: settings.itemLink?.itemLinkColor || Theme.colors.primary.contrastText, size: '20px' }}
+                    background={{ color: settings.itemLink?.itemLinkTransparent ? 'transparent !important' : (settings.itemLink?.itemLinkBackgroundColor ? `${settings.itemLink?.itemLinkBackgroundColor} !important` : '') }}
+                    onClick={() => window.location.href = product.link.url}
+                    display='block'
+                  ></i-button>
+                </i-panel> : <i-label></i-label>
+            }
           </i-vstack>
         </i-grid-layout>
       )
@@ -137,7 +248,7 @@ export default class Main extends Module implements PageBlock {
             horizontalAlignment='center'
             padding={{
               top: '1.5rem',
-              bottom: '1.5rem',
+              bottom: '1rem',
               left: '1.5rem',
               right: '1.5rem',
             }}
@@ -147,6 +258,7 @@ export default class Main extends Module implements PageBlock {
                 id='lblTitle'
                 font={{ size: '1.5rem', weight: 600 }}
               ></i-label>
+              <i-panel id="pnlDivider" visible={false} height={2} width='inherit' maxWidth={200} margin={{ bottom: 8, left: 'auto', right: 'auto' }} background={{ color: Theme.colors.primary.main }}></i-panel>
               <i-label
                 id='lblDesc'
                 font={{ size: '0.875rem', color: Theme.colors.secondary.main }}
