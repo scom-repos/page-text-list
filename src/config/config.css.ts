@@ -25,3 +25,8 @@ export const uploadStyle = Styles.style({
 export const pointerStyle = Styles.style({
   cursor: 'pointer'
 })
+
+export const boxShadow = Styles.style({
+  boxShadow: '0 0 1px 0 rgb(0 0 0 / 75%)',
+  borderRadius: 5
+})

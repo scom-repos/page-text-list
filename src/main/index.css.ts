@@ -89,3 +89,15 @@ export const containerStyle = Styles.style({
   textAlign: (Theme.layout.container.textAlign as any),
   margin: '0 auto'
 })
+
+export const linkStyle = Styles.style({
+  width: 'fit-content',
+  margin: 'auto auto 0',
+  $nest: {
+    'i-button': {
+      boxShadow: 'none',
+      outline: 'none',
+      marginTop: 8
+    }
+  }
+})

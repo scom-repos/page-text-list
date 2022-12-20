@@ -6,9 +6,10 @@ import {
   Input,
   VStack,
   Control,
-  Upload
+  Upload,
+  Checkbox
 } from '@ijstech/components';
-import { textareaStyle, uploadStyle, pointerStyle } from './config.css';
+import { textareaStyle, uploadStyle, pointerStyle, boxShadow } from './config.css';
 import { IConfig, IData } from '@feature/global';
 
 declare global {
@@ -22,6 +23,7 @@ declare global {
 @customModule
 @customElements("pageblock-feature-config")
 export default class Config extends Module {
+  private ckbDivider: Checkbox;
   private edtTitle: Input;
   private edtDesc: Input;
   private edtColumnsPerRow: Input;
@@ -38,8 +40,9 @@ export default class Config extends Module {
 
   get data() {
     const _data: IConfig = {
-      title: this.edtTitle.value || "",
-      description: this.edtDesc.value || "",
+      title: this.edtTitle.value || '',
+      divider: this.ckbDivider.checked || false,
+      description: this.edtDesc.value || '',
       columnsPerRow: 3,
       data: this.itemList || []
     };
@@ -49,8 +52,9 @@ export default class Config extends Module {
   }
 
   set data(config: IConfig) {
-    this.edtTitle.value = config.title || "";
-    this.edtDesc.value = config.description || "";
+    this.edtTitle.value = config.title || '';
+    this.edtDesc.value = config.description || '';
+    this.ckbDivider.checked = config.divider || false;
     this.edtColumnsPerRow.value = `${config.columnsPerRow || 3}`
     this.itemList = config.data || [];
     this.listStack.clearInnerHTML();
@@ -65,15 +69,15 @@ export default class Config extends Module {
         maxHeight={200}
         maxWidth={200}
         class={uploadStyle}
-        onChanged={(source: Control, files: File[]) => this.updateList(source, lastIndex, 'img', files)}
+        onChanged={(source: Control, files: File[]) => this.updateList(source, lastIndex, { key: 'img' }, files)}
         onRemoved={() => this.onRemovedImage(lastIndex)}
       ></i-upload>
     );
     const itemElm = (
       <i-vstack
-        gap='0.5rem'
+        gap={8}
         padding={{ top: '1rem', bottom: '1rem', left: '1rem', right: '1rem' }}
-        border={{ width: 1, style: 'solid', color: 'rgba(217,225,232,.38)', radius: 5 }}
+        class={boxShadow}
         position="relative"
       >
         <i-icon
@@ -84,31 +88,49 @@ export default class Config extends Module {
           onClick={(source: Control) => this.deleteItem(itemElm, lastIndex)}
         ></i-icon>
         <i-hstack>
-          <i-label caption="Name"></i-label>
-          <i-label caption="*" font={{ color: 'red' }} margin={{left: '4px'}}></i-label>
-          <i-label caption=":"></i-label>
+          <i-label caption="Title" font={{ bold: true }}></i-label>
+          <i-label caption="*" font={{ color: 'red' }} margin={{ left: '2px' }}></i-label>
+          <i-label caption=":" font={{ bold: true }}></i-label>
         </i-hstack>
-        <i-input width="100%" value={item?.name || ''} onChanged={(source: Control) => this.updateList(source, lastIndex, 'name')}></i-input>
-        <i-label caption="Description:"></i-label>
+        <i-input width="100%" value={item?.title || ''} onChanged={(source: Control) => this.updateList(source, lastIndex, { key: 'title' })}></i-input>
+        <i-hstack gap={8} margin={{ top: 4, bottom: 12 }} verticalAlignment="center">
+          <i-label caption="Show Divider:" font={{ bold: true }}></i-label>
+          <i-checkbox checked={item?.divider || false} height={16} onChanged={(source: Control) => this.updateList(source, lastIndex, { key: 'divider' })}></i-checkbox>
+        </i-hstack>
+        <i-label caption="Description:" font={{ bold: true }}></i-label>
         <i-input
           class={textareaStyle}
           width="100%"
           height="auto"
           resize="auto-grow"
           inputType='textarea'
-          value={item?.caption || ''}
-          onChanged={(source: Control) => this.updateList(source, lastIndex, 'caption')}
+          value={item?.description || ''}
+          onChanged={(source: Control) => this.updateList(source, lastIndex, { key: 'description' })}
+          margin={{ bottom: 8 }}
         ></i-input>
         <i-label caption="Image:"></i-label>
-        <i-panel>
-          { uploadElm }
+        <i-panel margin={{ bottom: 8 }}>
+          {uploadElm}
         </i-panel>
+        <i-label caption="Link:" font={{ bold: true }}></i-label>
+        <i-vstack
+          gap={8}
+          margin={{ bottom: 8 }}
+          padding={{ top: '1rem', bottom: '1rem', left: '1rem', right: '1rem' }}
+          class={boxShadow}
+          position="relative"
+        >
+          <i-label caption="Caption:" font={{ bold: true }}></i-label>
+          <i-input value={item?.link?.caption || ''} width="100%" onChanged={(source: Control) => this.updateList(source, lastIndex, { key: 'link', key2: 'caption' })}></i-input>
+          <i-label caption="URL:" font={{ bold: true }}></i-label>
+          <i-input value={item?.link?.url || ''} width="100%" onChanged={(source: Control) => this.updateList(source, lastIndex, { key: 'link', key2: 'url' })}></i-input>
+        </i-vstack>
       </i-vstack>
     );
     if (item?.img)
       uploadElm.preview(item?.img);
     this.listStack.appendChild(itemElm);
-    this.itemMap.set(lastIndex, item ||  { name: '' });
+    this.itemMap.set(lastIndex, item || { title: '' });
   }
 
   private onRemovedImage(index: number) {
@@ -126,40 +148,53 @@ export default class Config extends Module {
     }
   }
 
-  private async updateList(source: Control, index: number, prop: 'name' | 'caption' | 'img', files?: File[]) {
+  private async updateList(source: Control, index: number, prop: { key: string, key2?: string }, files?: File[]) {
     const item: any = this.itemMap.get(index);
-    if (prop === 'img') {
+    if (prop.key === 'img') {
       const uploadElm = source as Upload;
       item.img = files ? await uploadElm.toBase64(files[0]) : undefined;
+    } else if (prop.key === 'divider') {
+      item[prop.key] = (source as Checkbox).checked;
     } else {
-      item[prop] = (source as Input).value;
+      if (prop.key2) {
+        if (!item[prop.key]) {
+          item[prop.key] = {};
+        }
+        item[prop.key][prop.key2] = (source as Input).value;
+      } else {
+        item[prop.key] = (source as Input).value;
+      }
     }
   }
 
   render() {
     return (
-      <i-vstack id="pnlConfig" gap='0.5rem' padding={{ top: '1rem', bottom: '1rem', left: '1rem', right: '1rem' }}>
-        <i-label caption="Title:"></i-label>
+      <i-vstack id="pnlConfig" gap={8} padding={{ top: '1rem', bottom: '1rem', left: '1rem', right: '1rem' }}>
+        <i-label caption="Title:" font={{ bold: true }}></i-label>
         <i-input id="edtTitle" width="100%"></i-input>
-        <i-label caption="Description:"></i-label>
+        <i-hstack gap={8} margin={{ top: 4, bottom: 12 }} verticalAlignment="center">
+          <i-label caption="Show Divider:" font={{ bold: true }}></i-label>
+          <i-checkbox id="ckbDivider" checked={false} height={16}></i-checkbox>
+        </i-hstack>
+        <i-label caption="Description:" font={{ bold: true }}></i-label>
         <i-input
           id="edtDesc"
           class={textareaStyle}
           width="100%"
           height="auto"
           resize="auto-grow"
-          inputType='textarea'
+          inputType="textarea"
         ></i-input>
-        <i-label caption="Columns Per Row:"></i-label>
-        <i-input id="edtColumnsPerRow" width="100%" inputType="number"></i-input>
-        <i-panel>
+        <i-label caption="Columns Per Row:" font={{ bold: true }}></i-label>
+        <i-input id="edtColumnsPerRow" width="100%" inputType="number" margin={{ bottom: 8 }}></i-input>
+        <i-panel margin={{ bottom: 8 }}>
           <i-button
             caption="Add Item"
             padding={{ left: '1rem', right: '1rem', top: '0.5rem', bottom: '0.5rem' }}
             onClick={() => this.addItem()}
           ></i-button>
         </i-panel>
-        <i-vstack id="listStack" gap="0.5rem"></i-vstack>
+        <i-vstack id="listStack" gap={16}></i-vstack>
       </i-vstack>
     )
   }
