@@ -7,6 +7,7 @@ interface IData {
     url?: string;
   }
   img?: string;
+  imageUrl?: string;
 }
 
 interface IConfig {

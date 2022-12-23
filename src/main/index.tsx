@@ -186,31 +186,30 @@ export default class Main extends Module implements PageBlock {
     this.pnlCardBody.appendChild(lytItems)
     const settings = this.settings?.item || {};
     dataList.forEach((product: IData) => {
+      const imageUrl = product.imageUrl || product.img || "";
       lytItems.append(
         <i-grid-layout
           width='100%'
           height='100%'
           class={cardItemStyle}
           gap={{ column: '1rem', row: '2rem' }}
-          templateAreas={product.img ? [['areaImg'], ['areaDetails']] : [['areaDetails']]}
+          templateRows={imageUrl ? ['100px', '1fr']: []}
           background={{ color: settings.itemTransparent ? 'transparent' : settings.itemBackgroundColor || '' }}
           padding={{ top: 16, bottom: 16 }}
           border={{ radius: 8 }}
         >
-          {product.img ? <i-image
+          {imageUrl ? <i-image
             class={imageStyle}
             width={settings.itemImage?.width || 'auto'}
             maxHeight={settings.itemImage?.height || 100}
             margin={{ left: settings.itemImage?.width ? 'auto' : 0, right: settings.itemImage?.width ? 'auto' : 0 }}
             padding={{ top: '1rem', left: '1rem', right: '1rem' }}
             overflow='hidden'
-            grid={{ area: 'areaImg' }}
-            url={product.img}
+            url={imageUrl}
             fallbackUrl={assets.fullPath('img/placeholder.jpg')}
           ></i-image> : []}
           <i-vstack
             gap='0.5rem'
-            grid={{ area: 'areaDetails' }}
             padding={{ left: '1rem', right: '1rem' }}
             class={centerStyle}
           >

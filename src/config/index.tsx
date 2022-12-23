@@ -112,6 +112,10 @@ export default class Config extends Module {
         <i-panel margin={{ bottom: 8 }}>
           {uploadElm}
         </i-panel>
+        <i-panel>
+          <i-label caption="URL"></i-label>
+          <i-input width="100%" onChanged={(source: Control) => this.updateList(source, lastIndex, { key: 'imageUrl' })}></i-input>
+        </i-panel>
         <i-label caption="Link:" font={{ bold: true }}></i-label>
         <i-vstack
           gap={8}
