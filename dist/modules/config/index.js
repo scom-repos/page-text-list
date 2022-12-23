@@ -94,7 +94,7 @@ define("@feature/config", ["require", "exports", "@ijstech/components", "@featur
                 this.$render("i-panel", { margin: { bottom: 8 } }, uploadElm),
                 this.$render("i-panel", null,
                     this.$render("i-label", { caption: "URL" }),
-                    this.$render("i-input", { width: "100%", onChanged: (source) => this.updateList(source, lastIndex, { key: 'imageUrl' }) })),
+                    this.$render("i-input", { width: "100%", value: (item === null || item === void 0 ? void 0 : item.imageUrl) || '', onChanged: (source) => this.updateList(source, lastIndex, { key: 'imageUrl' }) })),
                 this.$render("i-label", { caption: "Link:", font: { bold: true } }),
                 this.$render("i-vstack", { gap: 8, margin: { bottom: 8 }, padding: { top: '1rem', bottom: '1rem', left: '1rem', right: '1rem' }, class: config_css_1.boxShadow, position: "relative" },
                     this.$render("i-label", { caption: "Caption:", font: { bold: true } }),
