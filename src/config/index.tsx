@@ -64,15 +64,15 @@ export default class Config extends Module {
 
   private addItem(item?: IData) {
     const lastIndex = this.itemList.length;
-    const uploadElm = (
-      <i-upload
-        maxHeight={200}
-        maxWidth={200}
-        class={uploadStyle}
-        onChanged={(source: Control, files: File[]) => this.updateList(source, lastIndex, { key: 'img' }, files)}
-        onRemoved={() => this.onRemovedImage(lastIndex)}
-      ></i-upload>
-    );
+    // const uploadElm = (
+    //   <i-upload
+    //     maxHeight={200}
+    //     maxWidth={200}
+    //     class={uploadStyle}
+    //     onChanged={(source: Control, files: File[]) => this.updateList(source, lastIndex, { key: 'img' }, files)}
+    //     onRemoved={() => this.onRemovedImage(lastIndex)}
+    //   ></i-upload>
+    // );
     const itemElm = (
       <i-vstack
         gap={8}
@@ -103,17 +103,17 @@ export default class Config extends Module {
           width="100%"
           height="auto"
           resize="auto-grow"
-          inputType='textarea'
+          inputType="textarea"
           value={item?.description || ''}
           onChanged={(source: Control) => this.updateList(source, lastIndex, { key: 'description' })}
           margin={{ bottom: 8 }}
         ></i-input>
-        <i-label caption="Image:"></i-label>
-        <i-panel margin={{ bottom: 8 }}>
+        <i-label caption="URL Image:" font={{ bold: true }}></i-label>
+        {/* <i-panel margin={{ bottom: 8 }}>
           {uploadElm}
-        </i-panel>
-        <i-panel>
-          <i-label caption="URL"></i-label>
+        </i-panel> */}
+        <i-panel margin={{ bottom: 8 }}>
+          {/* <i-label caption="URL"></i-label> */}
           <i-input width="100%" value={item?.imageUrl || ''} onChanged={(source: Control) => this.updateList(source, lastIndex, { key: 'imageUrl' })}></i-input>
         </i-panel>
         <i-label caption="Link:" font={{ bold: true }}></i-label>
@@ -131,8 +131,8 @@ export default class Config extends Module {
         </i-vstack>
       </i-vstack>
     );
-    if (item?.img)
-      uploadElm.preview(item?.img);
+    // if (item?.img)
+    //   uploadElm.preview(item?.img);
     this.listStack.appendChild(itemElm);
     this.itemMap.set(lastIndex, item || { title: '' });
   }

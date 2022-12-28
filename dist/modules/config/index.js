@@ -77,7 +77,15 @@ define("@feature/config", ["require", "exports", "@ijstech/components", "@featur
         addItem(item) {
             var _a, _b;
             const lastIndex = this.itemList.length;
-            const uploadElm = (this.$render("i-upload", { maxHeight: 200, maxWidth: 200, class: config_css_1.uploadStyle, onChanged: (source, files) => this.updateList(source, lastIndex, { key: 'img' }, files), onRemoved: () => this.onRemovedImage(lastIndex) }));
+            // const uploadElm = (
+            //   <i-upload
+            //     maxHeight={200}
+            //     maxWidth={200}
+            //     class={uploadStyle}
+            //     onChanged={(source: Control, files: File[]) => this.updateList(source, lastIndex, { key: 'img' }, files)}
+            //     onRemoved={() => this.onRemovedImage(lastIndex)}
+            //   ></i-upload>
+            // );
             const itemElm = (this.$render("i-vstack", { gap: 8, padding: { top: '1rem', bottom: '1rem', left: '1rem', right: '1rem' }, class: config_css_1.boxShadow, position: "relative" },
                 this.$render("i-icon", { name: "times", fill: "red", width: 20, height: 20, position: "absolute", top: 10, right: 10, class: config_css_1.pointerStyle, onClick: (source) => this.deleteItem(itemElm, lastIndex) }),
                 this.$render("i-hstack", null,
@@ -89,11 +97,9 @@ define("@feature/config", ["require", "exports", "@ijstech/components", "@featur
                     this.$render("i-label", { caption: "Show Divider:", font: { bold: true } }),
                     this.$render("i-checkbox", { checked: (item === null || item === void 0 ? void 0 : item.divider) || false, height: 16, onChanged: (source) => this.updateList(source, lastIndex, { key: 'divider' }) })),
                 this.$render("i-label", { caption: "Description:", font: { bold: true } }),
-                this.$render("i-input", { class: config_css_1.textareaStyle, width: "100%", height: "auto", resize: "auto-grow", inputType: 'textarea', value: (item === null || item === void 0 ? void 0 : item.description) || '', onChanged: (source) => this.updateList(source, lastIndex, { key: 'description' }), margin: { bottom: 8 } }),
-                this.$render("i-label", { caption: "Image:" }),
-                this.$render("i-panel", { margin: { bottom: 8 } }, uploadElm),
-                this.$render("i-panel", null,
-                    this.$render("i-label", { caption: "URL" }),
+                this.$render("i-input", { class: config_css_1.textareaStyle, width: "100%", height: "auto", resize: "auto-grow", inputType: "textarea", value: (item === null || item === void 0 ? void 0 : item.description) || '', onChanged: (source) => this.updateList(source, lastIndex, { key: 'description' }), margin: { bottom: 8 } }),
+                this.$render("i-label", { caption: "URL Image:", font: { bold: true } }),
+                this.$render("i-panel", { margin: { bottom: 8 } },
                     this.$render("i-input", { width: "100%", value: (item === null || item === void 0 ? void 0 : item.imageUrl) || '', onChanged: (source) => this.updateList(source, lastIndex, { key: 'imageUrl' }) })),
                 this.$render("i-label", { caption: "Link:", font: { bold: true } }),
                 this.$render("i-vstack", { gap: 8, margin: { bottom: 8 }, padding: { top: '1rem', bottom: '1rem', left: '1rem', right: '1rem' }, class: config_css_1.boxShadow, position: "relative" },
@@ -101,8 +107,8 @@ define("@feature/config", ["require", "exports", "@ijstech/components", "@featur
                     this.$render("i-input", { value: ((_a = item === null || item === void 0 ? void 0 : item.link) === null || _a === void 0 ? void 0 : _a.caption) || '', width: "100%", onChanged: (source) => this.updateList(source, lastIndex, { key: 'link', key2: 'caption' }) }),
                     this.$render("i-label", { caption: "URL:", font: { bold: true } }),
                     this.$render("i-input", { value: ((_b = item === null || item === void 0 ? void 0 : item.link) === null || _b === void 0 ? void 0 : _b.url) || '', width: "100%", onChanged: (source) => this.updateList(source, lastIndex, { key: 'link', key2: 'url' }) }))));
-            if (item === null || item === void 0 ? void 0 : item.img)
-                uploadElm.preview(item === null || item === void 0 ? void 0 : item.img);
+            // if (item?.img)
+            //   uploadElm.preview(item?.img);
             this.listStack.appendChild(itemElm);
             this.itemMap.set(lastIndex, item || { title: '' });
         }

@@ -186,48 +186,50 @@ export default class Main extends Module implements PageBlock {
     this.pnlCardBody.appendChild(lytItems)
     const settings = this.settings?.item || {};
     dataList.forEach((product: IData) => {
-      const imageUrl = product.imageUrl || product.img || "";
+      const { title, description, divider, imageUrl, img, link } = product;
+      const { itemTransparent, itemBackgroundColor, itemImage, itemTitleColor, itemDescriptionColor, itemLink } = settings;
+      const _imageUrl = imageUrl || img || '';
       lytItems.append(
         <i-grid-layout
-          width='100%'
-          height='100%'
+          width="100%"
+          height="100%"
           class={cardItemStyle}
           gap={{ column: '1rem', row: '2rem' }}
-          templateRows={imageUrl ? ['100px', '1fr']: []}
-          background={{ color: settings.itemTransparent ? 'transparent' : settings.itemBackgroundColor || '' }}
+          templateRows={_imageUrl ? ['100px', '1fr']: []}
+          background={{ color: itemTransparent ? 'transparent' : itemBackgroundColor || '' }}
           padding={{ top: 16, bottom: 16 }}
           border={{ radius: 8 }}
         >
-          {imageUrl ? <i-image
+          {_imageUrl ? <i-image
             class={imageStyle}
-            width={settings.itemImage?.width || 'auto'}
-            maxHeight={settings.itemImage?.height || 100}
-            margin={{ left: settings.itemImage?.width ? 'auto' : 0, right: settings.itemImage?.width ? 'auto' : 0 }}
+            width={itemImage?.width || 'auto'}
+            maxHeight={itemImage?.height || 100}
+            margin={{ left: itemImage?.width ? 'auto' : 0, right: itemImage?.width ? 'auto' : 0 }}
             padding={{ top: '1rem', left: '1rem', right: '1rem' }}
-            overflow='hidden'
-            url={imageUrl}
+            overflow="hidden"
+            url={_imageUrl}
             fallbackUrl={assets.fullPath('img/placeholder.jpg')}
           ></i-image> : []}
           <i-vstack
-            gap='0.5rem'
+            gap="0.5rem"
             padding={{ left: '1rem', right: '1rem' }}
             class={centerStyle}
           >
             <i-label
-              caption={product.title || ''}
-              font={{ weight: 600, size: '1.125rem', color: settings.itemTitleColor || '' }}
+              caption={title || ''}
+              font={{ weight: 600, size: '1.125rem', color: itemTitleColor || '' }}
             ></i-label>
-            <i-panel height={2} visible={product.divider || false} width={200} maxWidth='100%' margin={{ bottom: 8, left: 'auto', right: 'auto' }} background={{ color: Theme.colors.primary.main }}></i-panel>
-            <i-label caption={product.description || ''} font={{ color: settings.itemDescriptionColor || '' }}></i-label>
+            <i-panel height={2} visible={divider || false} width={200} maxWidth='100%' margin={{ bottom: 8, left: 'auto', right: 'auto' }} background={{ color: Theme.colors.primary.main }}></i-panel>
+            <i-label caption={description || ''} font={{ color: itemDescriptionColor || '' }}></i-label>
             {
-              product.link?.caption ?
+              link?.caption ?
                 <i-panel class={linkStyle}>
                   <i-button
-                    caption={product.link.caption}
-                    font={{ color: settings.itemLink?.itemLinkColor || Theme.colors.primary.contrastText, size: '20px' }}
-                    background={{ color: settings.itemLink?.itemLinkTransparent ? 'transparent !important' : (settings.itemLink?.itemLinkBackgroundColor ? `${settings.itemLink?.itemLinkBackgroundColor} !important` : '') }}
-                    onClick={() => window.location.href = product.link.url}
-                    display='block'
+                    caption={link.caption}
+                    font={{ color: itemLink?.itemLinkColor || Theme.colors.primary.contrastText, size: '20px' }}
+                    background={{ color: itemLink?.itemLinkTransparent ? 'transparent !important' : (itemLink?.itemLinkBackgroundColor ? `${itemLink?.itemLinkBackgroundColor} !important` : '') }}
+                    onClick={() => window.location.href = link.url}
+                    display="block"
                   ></i-button>
                 </i-panel> : <i-label></i-label>
             }
