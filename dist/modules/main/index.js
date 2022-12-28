@@ -252,17 +252,18 @@ define("@feature/main", ["require", "exports", "@ijstech/components", "@feature/
             this.pnlCardBody.appendChild(lytItems);
             const settings = ((_a = this.settings) === null || _a === void 0 ? void 0 : _a.item) || {};
             dataList.forEach((product) => {
-                var _a, _b, _c, _d, _e, _f, _g, _h, _j;
-                const imageUrl = product.imageUrl || product.img || "";
-                lytItems.append(this.$render("i-grid-layout", { width: '100%', height: '100%', class: index_css_1.cardItemStyle, gap: { column: '1rem', row: '2rem' }, templateRows: imageUrl ? ['100px', '1fr'] : [], background: { color: settings.itemTransparent ? 'transparent' : settings.itemBackgroundColor || '' }, padding: { top: 16, bottom: 16 }, border: { radius: 8 } },
-                    imageUrl ? this.$render("i-image", { class: index_css_1.imageStyle, width: ((_a = settings.itemImage) === null || _a === void 0 ? void 0 : _a.width) || 'auto', maxHeight: ((_b = settings.itemImage) === null || _b === void 0 ? void 0 : _b.height) || 100, margin: { left: ((_c = settings.itemImage) === null || _c === void 0 ? void 0 : _c.width) ? 'auto' : 0, right: ((_d = settings.itemImage) === null || _d === void 0 ? void 0 : _d.width) ? 'auto' : 0 }, padding: { top: '1rem', left: '1rem', right: '1rem' }, overflow: 'hidden', url: imageUrl, fallbackUrl: assets_1.default.fullPath('img/placeholder.jpg') }) : [],
-                    this.$render("i-vstack", { gap: '0.5rem', padding: { left: '1rem', right: '1rem' }, class: index_css_1.centerStyle },
-                        this.$render("i-label", { caption: product.title || '', font: { weight: 600, size: '1.125rem', color: settings.itemTitleColor || '' } }),
-                        this.$render("i-panel", { height: 2, visible: product.divider || false, width: 200, maxWidth: '100%', margin: { bottom: 8, left: 'auto', right: 'auto' }, background: { color: Theme.colors.primary.main } }),
-                        this.$render("i-label", { caption: product.description || '', font: { color: settings.itemDescriptionColor || '' } }),
-                        ((_e = product.link) === null || _e === void 0 ? void 0 : _e.caption) ?
+                const { title, description, divider, imageUrl, img, link } = product;
+                const { itemTransparent, itemBackgroundColor, itemImage, itemTitleColor, itemDescriptionColor, itemLink } = settings;
+                const _imageUrl = imageUrl || img || '';
+                lytItems.append(this.$render("i-grid-layout", { width: "100%", height: "100%", class: index_css_1.cardItemStyle, gap: { column: '1rem', row: '2rem' }, templateRows: _imageUrl ? ['100px', '1fr'] : [], background: { color: itemTransparent ? 'transparent' : itemBackgroundColor || '' }, padding: { top: 16, bottom: 16 }, border: { radius: 8 } },
+                    _imageUrl ? this.$render("i-image", { class: index_css_1.imageStyle, width: (itemImage === null || itemImage === void 0 ? void 0 : itemImage.width) || 'auto', maxHeight: (itemImage === null || itemImage === void 0 ? void 0 : itemImage.height) || 100, margin: { left: (itemImage === null || itemImage === void 0 ? void 0 : itemImage.width) ? 'auto' : 0, right: (itemImage === null || itemImage === void 0 ? void 0 : itemImage.width) ? 'auto' : 0 }, padding: { top: '1rem', left: '1rem', right: '1rem' }, overflow: "hidden", url: _imageUrl, fallbackUrl: assets_1.default.fullPath('img/placeholder.jpg') }) : [],
+                    this.$render("i-vstack", { gap: "0.5rem", padding: { left: '1rem', right: '1rem' }, class: index_css_1.centerStyle },
+                        this.$render("i-label", { caption: title || '', font: { weight: 600, size: '1.125rem', color: itemTitleColor || '' } }),
+                        this.$render("i-panel", { height: 2, visible: divider || false, width: 200, maxWidth: '100%', margin: { bottom: 8, left: 'auto', right: 'auto' }, background: { color: Theme.colors.primary.main } }),
+                        this.$render("i-label", { caption: description || '', font: { color: itemDescriptionColor || '' } }),
+                        (link === null || link === void 0 ? void 0 : link.caption) ?
                             this.$render("i-panel", { class: index_css_1.linkStyle },
-                                this.$render("i-button", { caption: product.link.caption, font: { color: ((_f = settings.itemLink) === null || _f === void 0 ? void 0 : _f.itemLinkColor) || Theme.colors.primary.contrastText, size: '20px' }, background: { color: ((_g = settings.itemLink) === null || _g === void 0 ? void 0 : _g.itemLinkTransparent) ? 'transparent !important' : (((_h = settings.itemLink) === null || _h === void 0 ? void 0 : _h.itemLinkBackgroundColor) ? `${(_j = settings.itemLink) === null || _j === void 0 ? void 0 : _j.itemLinkBackgroundColor} !important` : '') }, onClick: () => window.location.href = product.link.url, display: 'block' })) : this.$render("i-label", null))));
+                                this.$render("i-button", { caption: link.caption, font: { color: (itemLink === null || itemLink === void 0 ? void 0 : itemLink.itemLinkColor) || Theme.colors.primary.contrastText, size: '20px' }, background: { color: (itemLink === null || itemLink === void 0 ? void 0 : itemLink.itemLinkTransparent) ? 'transparent !important' : ((itemLink === null || itemLink === void 0 ? void 0 : itemLink.itemLinkBackgroundColor) ? `${itemLink === null || itemLink === void 0 ? void 0 : itemLink.itemLinkBackgroundColor} !important` : '') }, onClick: () => window.location.href = link.url, display: "block" })) : this.$render("i-label", null))));
             });
         }
         render() {
