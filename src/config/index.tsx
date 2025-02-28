@@ -9,37 +9,37 @@ import {
   Upload,
   Checkbox
 } from '@ijstech/components';
-import { textareaStyle, uploadStyle, pointerStyle, boxShadow } from './config.css';
-import { IConfig, IData } from '@feature/global';
+import { textareaStyle, pointerStyle, boxShadow } from './config.css';
+import { ITextList, ITextItem } from '../global/index';
 
 declare global {
   namespace JSX {
     interface IntrinsicElements {
-      ['pageblock-feature-config']: ControlElement;
+      ['page-text-list-config']: ControlElement;
     }
   }
 }
 
 @customModule
-@customElements("pageblock-feature-config")
+@customElements("page-text-list-config")
 export default class Config extends Module {
   private ckbDivider: Checkbox;
   private edtTitle: Input;
   private edtDesc: Input;
   private edtColumnsPerRow: Input;
   private listStack: VStack;
-  private itemMap: Map<number, IData> = new Map();
-  private _itemList: IData[] = [];
+  private itemMap: Map<number, ITextItem> = new Map();
+  private _itemList: ITextItem[] = [];
 
   get itemList() {
     return Array.from(this.itemMap).map(item => item[1]);
   }
-  set itemList(data: IData[]) {
+  set itemList(data: ITextItem[]) {
     this._itemList = data;
   }
 
   get data() {
-    const _data: IConfig = {
+    const _data: ITextList = {
       title: this.edtTitle.value || '',
       divider: this.ckbDivider.checked || false,
       description: this.edtDesc.value || '',
@@ -51,7 +51,7 @@ export default class Config extends Module {
     return _data
   }
 
-  set data(config: IConfig) {
+  set data(config: ITextList) {
     this.edtTitle.value = config.title || '';
     this.edtDesc.value = config.description || '';
     this.ckbDivider.checked = config.divider || false;
@@ -62,7 +62,7 @@ export default class Config extends Module {
     this._itemList.forEach(item => this.addItem(item));
   }
 
-  private addItem(item?: IData) {
+  private addItem(item?: ITextItem) {
     const lastIndex = this.itemList.length;
     // const uploadElm = (
     //   <i-upload

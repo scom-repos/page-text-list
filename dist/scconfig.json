@@ -1,32 +1,8 @@
 {
-    "name": "@feature/main",
+    "name": "@scom/page-text-list",
+    "type": "widget",
     "version": "0.1.0",
-    "env": "",
-    "moduleDir": "modules",
-    "main": "@feature/main",
-    "modules": {
-        "@feature/assets": {
-            "path": "assets",
-            "dependencies": []
-        },
-        "@feature/main": {
-            "path": "main",
-            "dependencies": [
-                "@feature/global",
-                "@feature/config",
-                "@feature/assets"
-            ]
-        },
-        "@feature/global": {
-            "path": "global",
-            "dependencies": []
-        },
-        "@feature/config": {
-            "path": "config",
-            "dependencies": [
-                "@feature/global"
-            ]
-        }
-    },
-    "dependencies": {}
+    "dependencies": [
+        "@ijstech/components"
+    ]
 }
