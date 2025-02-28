@@ -10,8 +10,12 @@
     "resolveJsonModule": true,
     "forceConsistentCasingInFileNames": true,
     "declaration": false,
-    "baseUrl": "."
+    "baseUrl": ".",
+    "paths": {
+      "@modules/*": ["modules/*"],
+      "@scom/page-text-list": ["./ref"]
+    }
   },
-  "include": ["src/**/*.ts", "src/**/*.tsx"],
+  "include": ["modules/**/*.ts", "modules/**/*.tsx"],
   "exclude": ["node_modules"]
 }
