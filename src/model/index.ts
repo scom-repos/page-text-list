@@ -1,4 +1,3 @@
-import { Module } from "@ijstech/components";
 import { ISettings, ITextItem, ITextList } from "../global/index";
 
 interface IOptions {
@@ -8,12 +7,18 @@ interface IOptions {
 
 export class Model {
   private _data: ITextList = {};
-  private _module: Module;
   private _options: IOptions;
+  private _tag: ISettings = {
+    light: {},
+    dark: {}
+  };
 
-  constructor(module: Module, options: IOptions) {
+  constructor(options: IOptions) {
     this._options = options;
-    this._module = module;
+  }
+
+  get tag() {
+    return this._tag || {};
   }
 
   get data() {
@@ -29,30 +34,55 @@ export class Model {
     this._options?.onUpdateBlock();
   }
 
-  getData() {
-    return this._data;
+  private getData() {
+    return this._data || {};
   }
 
-  getTag() {
-    return this._module.tag;
+  private getTag() {
+    return this._tag || {};
   }
 
-  setTag(value: ISettings) {
+  private setTag(value: ISettings) {
     const newValue = value || {};
     for (let prop in newValue) {
       if (newValue.hasOwnProperty(prop)) {
         if (prop === 'light' || prop === 'dark') this.updateTag(prop, newValue[prop]);
-        else this._module.tag[prop] = newValue[prop];
+        else this._tag[prop] = newValue[prop];
       }
     }
+
     this._options?.onUpdateTheme();
     this._options?.onUpdateBlock();
   }
 
   private updateTag(type: 'light' | 'dark', value: any) {
-    this._module.tag[type] = this._module.tag[type] ?? {};
+    this._tag[type] = this._tag[type] || {};
     for (let prop in value) {
-      if (value.hasOwnProperty(prop)) this._module.tag[type][prop] = value[prop];
+      if (value.hasOwnProperty(prop)) this._tag[type][prop] = value[prop];
     }
+  }
+
+  getConfigurators() {
+    return [
+      {
+        name: 'Builder Configurator',
+        target: 'Builders',
+        getActions: () => {
+          return []
+        },
+        getData: this.getData.bind(this),
+        setData: this.setData.bind(this),
+        getTag: this.getTag.bind(this),
+        setTag: this.setTag.bind(this),
+      },
+      {
+        name: 'Emdedder Configurator',
+        target: 'Embedders',
+        getData: this.getData.bind(this),
+        setData: this.setData.bind(this),
+        getTag: this.getTag.bind(this),
+        setTag: this.setTag.bind(this),
+      },
+    ];
   }
 }

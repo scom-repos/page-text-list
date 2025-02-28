@@ -30,7 +30,6 @@ export default class ScomPageTextList extends Module {
   private pnlCard: Panel
 
   private model: Model;
-  tag: ISettings = {}
 
   get data() {
     return this.model.data
@@ -40,17 +39,13 @@ export default class ScomPageTextList extends Module {
     this.model.data = value;
   }
 
-  private getData() {
-    return this.model.getData()
-  }
-
   private async setData(data: ITextList) {
     this.model.setData(data);
   }
 
   private onUpdateBlock() {
-    if (this.tag?.maxWidth) {
-      this.pnlBlock.maxWidth = this.tag.maxWidth;
+    if (this.model.tag?.maxWidth) {
+      this.pnlBlock.maxWidth = this.model.tag.maxWidth;
     }
     this.renderList();
   }
@@ -64,7 +59,7 @@ export default class ScomPageTextList extends Module {
       <i-hstack
         width='100%'
         padding={{ bottom: '1rem', left: '1rem', right: '1rem' }}
-        gap={this.tag?.gap || '1rem'}
+        gap={this.model.tag?.gap || '1rem'}
         horizontalAlignment='center'
         background={{color: Theme.background.main}}
         wrap='wrap'
@@ -82,7 +77,7 @@ export default class ScomPageTextList extends Module {
         descriptionFontSize = "0.875rem",
         imageRadius = 0,
         itemMaxWidth = "100%"
-      } = this.tag;
+      } = this.model.tag;
 
       lytItems.append(
         <i-grid-layout
@@ -147,56 +142,28 @@ export default class ScomPageTextList extends Module {
     })
   }
 
-  private getTag() {
-    return this.model.getTag()
-  }
-
-  private async setTag(value: any) {
-    this.model.setTag(value);
-  }
-
   private updateStyle(name: string, value: any) {
     value ? this.style.setProperty(name, value) : this.style.removeProperty(name);
   }
 
   private onUpdateTheme() {
     const themeVar = document.body.style.getPropertyValue('--theme') || 'dark';
-    this.updateStyle('--text-primary', this.tag[themeVar]?.titleColor);
-    this.updateStyle('--background-main', this.tag[themeVar]?.backgroundColor);
-    this.updateStyle('--text-secondary', this.tag[themeVar]?.descriptionColor);
-    this.updateStyle('--action-active_background', this.tag[themeVar]?.linkBackgroundColor);
-    this.updateStyle('--action-active', this.tag[themeVar]?.linkColor);
-    this.updateStyle('--background-paper', this.tag[themeVar]?.itemBackgroundColor);
-    this.updateStyle('--background-default', this.tag[themeVar]?.imageBackgroundColor);
+    this.updateStyle('--text-primary', this.model.tag[themeVar]?.titleColor);
+    this.updateStyle('--background-main', this.model.tag[themeVar]?.backgroundColor);
+    this.updateStyle('--text-secondary', this.model.tag[themeVar]?.descriptionColor);
+    this.updateStyle('--action-active_background', this.model.tag[themeVar]?.linkBackgroundColor);
+    this.updateStyle('--action-active', this.model.tag[themeVar]?.linkColor);
+    this.updateStyle('--background-paper', this.model.tag[themeVar]?.itemBackgroundColor);
+    this.updateStyle('--background-default', this.model.tag[themeVar]?.imageBackgroundColor);
   }
 
   getConfigurators() {
-    return [
-      {
-        name: 'Builder Configurator',
-        target: 'Builders',
-        getActions: () => {
-          return []
-        },
-        getData: this.getData.bind(this),
-        setData: this.setData.bind(this),
-        getTag: this.getTag.bind(this),
-        setTag: this.setTag.bind(this),
-      },
-      {
-        name: 'Emdedder Configurator',
-        target: 'Embedders',
-        getData: this.getData.bind(this),
-        setData: this.setData.bind(this),
-        getTag: this.getTag.bind(this),
-        setTag: this.setTag.bind(this),
-      },
-    ];
+    return this.model.getConfigurators();
   }
 
   init() {
     super.init();
-    this.model = new Model(this, {
+    this.model = new Model({
       onUpdateBlock: () => this.onUpdateBlock(),
       onUpdateTheme: () => this.onUpdateTheme()
     });

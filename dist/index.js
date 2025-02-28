@@ -58,10 +58,16 @@ define("@scom/page-text-list/model/index.ts", ["require", "exports"], function (
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.Model = void 0;
     class Model {
-        constructor(module, options) {
+        constructor(options) {
             this._data = {};
+            this._tag = {
+                light: {},
+                dark: {}
+            };
             this._options = options;
-            this._module = module;
+        }
+        get tag() {
+            return this._tag || {};
         }
         get data() {
             return this._data?.data || [];
@@ -74,10 +80,10 @@ define("@scom/page-text-list/model/index.ts", ["require", "exports"], function (
             this._options?.onUpdateBlock();
         }
         getData() {
-            return this._data;
+            return this._data || {};
         }
         getTag() {
-            return this._module.tag;
+            return this._tag || {};
         }
         setTag(value) {
             const newValue = value || {};
@@ -86,88 +92,18 @@ define("@scom/page-text-list/model/index.ts", ["require", "exports"], function (
                     if (prop === 'light' || prop === 'dark')
                         this.updateTag(prop, newValue[prop]);
                     else
-                        this._module.tag[prop] = newValue[prop];
+                        this._tag[prop] = newValue[prop];
                 }
             }
             this._options?.onUpdateTheme();
             this._options?.onUpdateBlock();
         }
         updateTag(type, value) {
-            this._module.tag[type] = this._module.tag[type] ?? {};
+            this._tag[type] = this._tag[type] || {};
             for (let prop in value) {
                 if (value.hasOwnProperty(prop))
-                    this._module.tag[type][prop] = value[prop];
+                    this._tag[type][prop] = value[prop];
             }
-        }
-    }
-    exports.Model = Model;
-});
-define("@scom/page-text-list", ["require", "exports", "@ijstech/components", "@scom/page-text-list/index.css.ts", "@scom/page-text-list/assets/index.ts", "@scom/page-text-list/model/index.ts"], function (require, exports, components_3, index_css_1, index_1, index_2) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    const Theme = components_3.Styles.Theme.ThemeVars;
-    let ScomPageTextList = class ScomPageTextList extends components_3.Module {
-        constructor() {
-            super(...arguments);
-            this.tag = {};
-        }
-        get data() {
-            return this.model.data;
-        }
-        set data(value) {
-            this.model.data = value;
-        }
-        getData() {
-            return this.model.getData();
-        }
-        async setData(data) {
-            this.model.setData(data);
-        }
-        onUpdateBlock() {
-            if (this.tag?.maxWidth) {
-                this.pnlBlock.maxWidth = this.tag.maxWidth;
-            }
-            this.renderList();
-        }
-        renderList() {
-            this.pnlCard.clearInnerHTML();
-            const columnsPerRow = this.data.length || 1;
-            const width = 100 / columnsPerRow + '%';
-            const lytItems = (this.$render("i-hstack", { width: '100%', padding: { bottom: '1rem', left: '1rem', right: '1rem' }, gap: this.tag?.gap || '1rem', horizontalAlignment: 'center', background: { color: Theme.background.main }, wrap: 'wrap' }));
-            this.pnlCard.appendChild(lytItems);
-            this.data.forEach((product) => {
-                const { title, description, image, link } = product;
-                const { borderRadius = 0, imageWidth = "auto", imageHeight = "100px", titleFontSize = "1.125rem", descriptionFontSize = "0.875rem", imageRadius = 0, itemMaxWidth = "100%" } = this.tag;
-                lytItems.append(this.$render("i-grid-layout", { width: width, stack: { grow: '0', shrink: '1' }, maxWidth: itemMaxWidth, class: index_css_1.cardItemStyle, gap: { column: '1rem', row: '1.5rem' }, templateRows: image ? ['100px', '1fr'] : [], background: { color: Theme.background.paper }, padding: { top: '1rem', bottom: '1rem' }, border: { radius: borderRadius }, mediaQueries: [
-                        { maxWidth: "767px", properties: { width: '100%' } }
-                    ] },
-                    image ? this.$render("i-image", { width: imageWidth, maxHeight: imageHeight, margin: { left: 'auto', right: 'auto' }, padding: { top: '0.5rem', left: '0.5rem', right: '0.5rem', bottom: '0.5rem' }, overflow: "hidden", border: { radius: imageRadius }, background: { color: Theme.background.default }, url: image, fallbackUrl: index_1.default.fullPath('img/placeholder.jpg') }) : [],
-                    this.$render("i-vstack", { gap: "1rem", padding: { left: '1rem', right: '1rem' }, height: "100%", verticalAlignment: 'space-between', class: "text-center" },
-                        this.$render("i-label", { caption: title || '', visible: !!title, font: { weight: 600, size: typeof titleFontSize === 'number' ? `${titleFontSize}px` : titleFontSize, color: Theme.text.primary } }),
-                        this.$render("i-label", { caption: description || '', visible: !!description, font: { color: Theme.text.secondary, size: typeof descriptionFontSize === 'number' ? `${descriptionFontSize}px` : descriptionFontSize } }),
-                        link?.caption ?
-                            this.$render("i-panel", null,
-                                this.$render("i-button", { caption: link.caption, padding: { left: '1rem', right: '1rem', top: '0.5rem', bottom: '0.5rem' }, font: { color: Theme.action.active, size: '20px' }, background: { color: Theme.action.activeBackground }, boxShadow: 'none', margin: { left: 'auto', right: 'auto' }, onClick: () => window.location.href = link.url })) : [])));
-            });
-        }
-        getTag() {
-            return this.model.getTag();
-        }
-        async setTag(value) {
-            this.model.setTag(value);
-        }
-        updateStyle(name, value) {
-            value ? this.style.setProperty(name, value) : this.style.removeProperty(name);
-        }
-        onUpdateTheme() {
-            const themeVar = document.body.style.getPropertyValue('--theme') || 'dark';
-            this.updateStyle('--text-primary', this.tag[themeVar]?.titleColor);
-            this.updateStyle('--background-main', this.tag[themeVar]?.backgroundColor);
-            this.updateStyle('--text-secondary', this.tag[themeVar]?.descriptionColor);
-            this.updateStyle('--action-active_background', this.tag[themeVar]?.linkBackgroundColor);
-            this.updateStyle('--action-active', this.tag[themeVar]?.linkColor);
-            this.updateStyle('--background-paper', this.tag[themeVar]?.itemBackgroundColor);
-            this.updateStyle('--background-default', this.tag[themeVar]?.imageBackgroundColor);
         }
         getConfigurators() {
             return [
@@ -192,9 +128,69 @@ define("@scom/page-text-list", ["require", "exports", "@ijstech/components", "@s
                 },
             ];
         }
+    }
+    exports.Model = Model;
+});
+define("@scom/page-text-list", ["require", "exports", "@ijstech/components", "@scom/page-text-list/index.css.ts", "@scom/page-text-list/assets/index.ts", "@scom/page-text-list/model/index.ts"], function (require, exports, components_3, index_css_1, index_1, index_2) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    const Theme = components_3.Styles.Theme.ThemeVars;
+    let ScomPageTextList = class ScomPageTextList extends components_3.Module {
+        get data() {
+            return this.model.data;
+        }
+        set data(value) {
+            this.model.data = value;
+        }
+        async setData(data) {
+            this.model.setData(data);
+        }
+        onUpdateBlock() {
+            if (this.model.tag?.maxWidth) {
+                this.pnlBlock.maxWidth = this.model.tag.maxWidth;
+            }
+            this.renderList();
+        }
+        renderList() {
+            this.pnlCard.clearInnerHTML();
+            const columnsPerRow = this.data.length || 1;
+            const width = 100 / columnsPerRow + '%';
+            const lytItems = (this.$render("i-hstack", { width: '100%', padding: { bottom: '1rem', left: '1rem', right: '1rem' }, gap: this.model.tag?.gap || '1rem', horizontalAlignment: 'center', background: { color: Theme.background.main }, wrap: 'wrap' }));
+            this.pnlCard.appendChild(lytItems);
+            this.data.forEach((product) => {
+                const { title, description, image, link } = product;
+                const { borderRadius = 0, imageWidth = "auto", imageHeight = "100px", titleFontSize = "1.125rem", descriptionFontSize = "0.875rem", imageRadius = 0, itemMaxWidth = "100%" } = this.model.tag;
+                lytItems.append(this.$render("i-grid-layout", { width: width, stack: { grow: '0', shrink: '1' }, maxWidth: itemMaxWidth, class: index_css_1.cardItemStyle, gap: { column: '1rem', row: '1.5rem' }, templateRows: image ? ['100px', '1fr'] : [], background: { color: Theme.background.paper }, padding: { top: '1rem', bottom: '1rem' }, border: { radius: borderRadius }, mediaQueries: [
+                        { maxWidth: "767px", properties: { width: '100%' } }
+                    ] },
+                    image ? this.$render("i-image", { width: imageWidth, maxHeight: imageHeight, margin: { left: 'auto', right: 'auto' }, padding: { top: '0.5rem', left: '0.5rem', right: '0.5rem', bottom: '0.5rem' }, overflow: "hidden", border: { radius: imageRadius }, background: { color: Theme.background.default }, url: image, fallbackUrl: index_1.default.fullPath('img/placeholder.jpg') }) : [],
+                    this.$render("i-vstack", { gap: "1rem", padding: { left: '1rem', right: '1rem' }, height: "100%", verticalAlignment: 'space-between', class: "text-center" },
+                        this.$render("i-label", { caption: title || '', visible: !!title, font: { weight: 600, size: typeof titleFontSize === 'number' ? `${titleFontSize}px` : titleFontSize, color: Theme.text.primary } }),
+                        this.$render("i-label", { caption: description || '', visible: !!description, font: { color: Theme.text.secondary, size: typeof descriptionFontSize === 'number' ? `${descriptionFontSize}px` : descriptionFontSize } }),
+                        link?.caption ?
+                            this.$render("i-panel", null,
+                                this.$render("i-button", { caption: link.caption, padding: { left: '1rem', right: '1rem', top: '0.5rem', bottom: '0.5rem' }, font: { color: Theme.action.active, size: '20px' }, background: { color: Theme.action.activeBackground }, boxShadow: 'none', margin: { left: 'auto', right: 'auto' }, onClick: () => window.location.href = link.url })) : [])));
+            });
+        }
+        updateStyle(name, value) {
+            value ? this.style.setProperty(name, value) : this.style.removeProperty(name);
+        }
+        onUpdateTheme() {
+            const themeVar = document.body.style.getPropertyValue('--theme') || 'dark';
+            this.updateStyle('--text-primary', this.model.tag[themeVar]?.titleColor);
+            this.updateStyle('--background-main', this.model.tag[themeVar]?.backgroundColor);
+            this.updateStyle('--text-secondary', this.model.tag[themeVar]?.descriptionColor);
+            this.updateStyle('--action-active_background', this.model.tag[themeVar]?.linkBackgroundColor);
+            this.updateStyle('--action-active', this.model.tag[themeVar]?.linkColor);
+            this.updateStyle('--background-paper', this.model.tag[themeVar]?.itemBackgroundColor);
+            this.updateStyle('--background-default', this.model.tag[themeVar]?.imageBackgroundColor);
+        }
+        getConfigurators() {
+            return this.model.getConfigurators();
+        }
         init() {
             super.init();
-            this.model = new index_2.Model(this, {
+            this.model = new index_2.Model({
                 onUpdateBlock: () => this.onUpdateBlock(),
                 onUpdateTheme: () => this.onUpdateTheme()
             });

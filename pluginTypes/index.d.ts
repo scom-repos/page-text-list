@@ -55,7 +55,6 @@ declare module "@scom/page-text-list/assets/index.ts" {
 }
 /// <amd-module name="@scom/page-text-list/model/index.ts" />
 declare module "@scom/page-text-list/model/index.ts" {
-    import { Module } from "@ijstech/components";
     import { ISettings, ITextItem, ITextList } from "@scom/page-text-list/global/index.ts";
     interface IOptions {
         onUpdateBlock: () => void;
@@ -63,22 +62,40 @@ declare module "@scom/page-text-list/model/index.ts" {
     }
     export class Model {
         private _data;
-        private _module;
         private _options;
-        constructor(module: Module, options: IOptions);
+        private _tag;
+        constructor(options: IOptions);
+        get tag(): ISettings;
         get data(): ITextItem[];
         set data(value: ITextItem[]);
         setData(data: ITextList): void;
-        getData(): ITextList;
-        getTag(): any;
-        setTag(value: ISettings): void;
+        private getData;
+        private getTag;
+        private setTag;
         private updateTag;
+        getConfigurators(): ({
+            name: string;
+            target: string;
+            getActions: () => any[];
+            getData: any;
+            setData: any;
+            getTag: any;
+            setTag: any;
+        } | {
+            name: string;
+            target: string;
+            getData: any;
+            setData: any;
+            getTag: any;
+            setTag: any;
+            getActions?: undefined;
+        })[];
     }
 }
 /// <amd-module name="@scom/page-text-list" />
 declare module "@scom/page-text-list" {
     import { Module, ControlElement } from '@ijstech/components';
-    import { ITextItem, ISettings } from "@scom/page-text-list/global/index.ts";
+    import { ITextItem } from "@scom/page-text-list/global/index.ts";
     global {
         namespace JSX {
             interface IntrinsicElements {
@@ -93,15 +110,11 @@ declare module "@scom/page-text-list" {
         private pnlBlock;
         private pnlCard;
         private model;
-        tag: ISettings;
         get data(): ITextItem[];
         set data(value: ITextItem[]);
-        private getData;
         private setData;
         private onUpdateBlock;
         private renderList;
-        private getTag;
-        private setTag;
         private updateStyle;
         private onUpdateTheme;
         getConfigurators(): ({
