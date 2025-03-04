@@ -112,11 +112,11 @@ export default class Main extends Module {
 
   render() {
     return <i-vstack width={'100%'} height={'100%'} gap="1rem" margin={{top: '1rem'}}>
-      <i-scom-page-text-list
+      <i-page-text-list
         id="pageBlock1"
         data={this._data1}
       />
-      <i-scom-page-text-list
+      <i-page-text-list
         id="pageBlock2"
         data={this._data2}
       />

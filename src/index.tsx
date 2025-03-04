@@ -3,9 +3,11 @@ import {
   Styles,
   Panel,
   customElements,
-  ControlElement
+  ControlElement,
+  customModule,
+  Container
 } from '@ijstech/components';
-import { ITextList, ITextItem, ISettings } from './global/index';
+import { ITextList, ITextItem } from './global/index';
 import { cardItemStyle, containerStyle } from './index.css';
 import assets from './assets/index';
 import { Model } from './model/index';
@@ -15,7 +17,7 @@ const Theme = Styles.Theme.ThemeVars;
 declare global {
   namespace JSX {
     interface IntrinsicElements {
-      ['i-scom-page-text-list']: ScomPageTextListElement;
+      ['i-page-text-list']: ScomPageTextListElement;
     }
   }
 }
@@ -24,12 +26,17 @@ interface ScomPageTextListElement extends ControlElement {
   data?: ITextItem[];
 }
 
-@customElements("i-scom-page-text-list")
+@customModule
+@customElements("i-page-text-list")
 export default class ScomPageTextList extends Module {
   private pnlBlock: Panel;
   private pnlCard: Panel
 
   private model: Model;
+
+  constructor(parent?: Container, options?: any) {
+    super(parent, options);
+  }
 
   get data() {
     return this.model.data
@@ -163,10 +170,10 @@ export default class ScomPageTextList extends Module {
 
   init() {
     super.init();
-    this.model = new Model({
-      onUpdateBlock: () => this.onUpdateBlock(),
-      onUpdateTheme: () => this.onUpdateTheme()
-    });
+      this.model = new Model({
+        onUpdateBlock: () => this.onUpdateBlock(),
+        onUpdateTheme: () => this.onUpdateTheme()
+      });
     const data = this.getAttribute('data', true);
     if (data) {
       this.setData({ data });
