@@ -136,6 +136,9 @@ define("@scom/page-text-list", ["require", "exports", "@ijstech/components", "@s
     Object.defineProperty(exports, "__esModule", { value: true });
     const Theme = components_3.Styles.Theme.ThemeVars;
     let ScomPageTextList = class ScomPageTextList extends components_3.Module {
+        constructor(parent, options) {
+            super(parent, options);
+        }
         get data() {
             return this.model.data;
         }
@@ -205,7 +208,8 @@ define("@scom/page-text-list", ["require", "exports", "@ijstech/components", "@s
         }
     };
     ScomPageTextList = __decorate([
-        (0, components_3.customElements)("i-scom-page-text-list")
+        components_3.customModule,
+        (0, components_3.customElements)("i-page-text-list")
     ], ScomPageTextList);
     exports.default = ScomPageTextList;
 });

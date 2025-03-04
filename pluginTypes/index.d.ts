@@ -94,12 +94,12 @@ declare module "@scom/page-text-list/model/index.ts" {
 }
 /// <amd-module name="@scom/page-text-list" />
 declare module "@scom/page-text-list" {
-    import { Module, ControlElement } from '@ijstech/components';
+    import { Module, ControlElement, Container } from '@ijstech/components';
     import { ITextItem } from "@scom/page-text-list/global/index.ts";
     global {
         namespace JSX {
             interface IntrinsicElements {
-                ['i-scom-page-text-list']: ScomPageTextListElement;
+                ['i-page-text-list']: ScomPageTextListElement;
             }
         }
     }
@@ -110,6 +110,7 @@ declare module "@scom/page-text-list" {
         private pnlBlock;
         private pnlCard;
         private model;
+        constructor(parent?: Container, options?: any);
         get data(): ITextItem[];
         set data(value: ITextItem[]);
         private setData;
