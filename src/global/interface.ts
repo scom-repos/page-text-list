@@ -1,3 +1,5 @@
+import { ISpace } from "@ijstech/components";
+
 interface ITextItem {
   title?: string;
   description?: string;
@@ -32,6 +34,7 @@ interface ISettings {
   descriptionFontSize?: string|number;
   imageRadius?: string|number;
   itemMaxWidth?: string|number;
+  itemPadding?: ISpace;
   light?: IColors;
   dark?: IColors;
 }
