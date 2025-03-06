@@ -8,7 +8,7 @@ import {
   Container
 } from '@ijstech/components';
 import { ITextList, ITextItem } from './global/index';
-import { cardItemStyle, containerStyle } from './index.css';
+import { cardItemStyle, customStyle } from './index.css';
 import assets from './assets/index';
 import { Model } from './model/index';
 
@@ -59,8 +59,8 @@ export default class ScomPageTextList extends Module {
 
   private renderList() {
     this.pnlCard.clearInnerHTML()
-    const columnsPerRow = this.data.length || 1
-    const width = 100 / columnsPerRow + '%'
+    // const columnsPerRow = this.data.length || 1
+    // const width = 100 / columnsPerRow + '%'
 
     const lytItems = (
       <i-hstack
@@ -83,27 +83,26 @@ export default class ScomPageTextList extends Module {
         titleFontSize = "1.125rem",
         descriptionFontSize = "0.875rem",
         imageRadius = 0,
-        itemMaxWidth = "100%"
+        itemMaxWidth = "100%",
+        itemPadding = { top: '0', bottom: '0', left: '0', right: '0' }
       } = this.model.tag;
 
       lytItems.append(
         <i-grid-layout
-          width={width}
-          stack={{grow: '0', shrink: '1'}}
+          stack={{grow: '1', shrink: '1', basis: "0%"}}
           maxWidth={itemMaxWidth}
           class={cardItemStyle}
           gap={{ column: '1rem', row: '1.5rem' }}
-          templateRows={image ? ['100px', '1fr']: []}
           background={{ color: Theme.background.paper }}
-          padding={{ top: '1rem', bottom: '1rem' }}
           border={{ radius: borderRadius }}
+          padding={itemPadding}
           mediaQueries={[
             { maxWidth: "767px", properties: { width: '100%' } }
           ]}
         >
           {image ? <i-image
             width={imageWidth}
-            maxHeight={imageHeight}
+            height={imageHeight}
             margin={{ left: 'auto', right: 'auto' }}
             padding={{ top: '0.5rem', left: '0.5rem', right: '0.5rem', bottom: '0.5rem' }}
             overflow="hidden"
@@ -114,21 +113,22 @@ export default class ScomPageTextList extends Module {
           ></i-image> : []}
           <i-vstack
             gap="1rem"
-            padding={{ left: '1rem', right: '1rem' }}
             height="100%"
             verticalAlignment='space-between'
             class="text-center"
           >
-            <i-label
-              caption={title || ''}
-              visible={!!title}
-              font={{ weight: 600, size: typeof titleFontSize === 'number' ? `${titleFontSize}px` : titleFontSize, color: Theme.text.primary }}
-            ></i-label>
-            <i-label
-              caption={description || ''}
-              visible={!!description}
-              font={{ color: Theme.text.secondary, size: typeof descriptionFontSize === 'number' ? `${descriptionFontSize}px` : descriptionFontSize }}
-            ></i-label>
+            <i-vstack gap="1rem" class="text-center" width="100%" height="100%">
+              <i-label
+                caption={title || ''}
+                visible={!!title}
+                font={{ weight: 600, size: typeof titleFontSize === 'number' ? `${titleFontSize}px` : titleFontSize, color: Theme.text.primary }}
+              ></i-label>
+              <i-label
+                caption={description || ''}
+                visible={!!description}
+                font={{ color: Theme.text.secondary, size: typeof descriptionFontSize === 'number' ? `${descriptionFontSize}px` : descriptionFontSize }}
+              ></i-label>
+            </i-vstack>
             {
               link?.caption ?
                 <i-panel>
@@ -183,7 +183,7 @@ export default class ScomPageTextList extends Module {
   render() {
     return (
       <i-panel id='pnlBlock' background={{ color: 'transparent' }} margin={{left: 'auto', right: 'auto'}}>
-        <i-panel id='pnlCard' class={containerStyle} />
+        <i-panel id='pnlCard' class={customStyle} />
       </i-panel>
     )
   }

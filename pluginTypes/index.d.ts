@@ -1,5 +1,6 @@
 /// <amd-module name="@scom/page-text-list/global/interface.ts" />
 declare module "@scom/page-text-list/global/interface.ts" {
+    import { ISpace } from "@ijstech/components";
     interface ITextItem {
         title?: string;
         description?: string;
@@ -31,6 +32,7 @@ declare module "@scom/page-text-list/global/interface.ts" {
         descriptionFontSize?: string | number;
         imageRadius?: string | number;
         itemMaxWidth?: string | number;
+        itemPadding?: ISpace;
         light?: IColors;
         dark?: IColors;
     }
@@ -43,7 +45,7 @@ declare module "@scom/page-text-list/global/index.ts" {
 /// <amd-module name="@scom/page-text-list/index.css.ts" />
 declare module "@scom/page-text-list/index.css.ts" {
     export const cardItemStyle: string;
-    export const containerStyle: string;
+    export const customStyle: string;
 }
 /// <amd-module name="@scom/page-text-list/assets/index.ts" />
 declare module "@scom/page-text-list/assets/index.ts" {

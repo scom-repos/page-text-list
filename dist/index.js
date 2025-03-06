@@ -15,7 +15,7 @@ define("@scom/page-text-list/global/index.ts", ["require", "exports"], function 
 define("@scom/page-text-list/index.css.ts", ["require", "exports", "@ijstech/components"], function (require, exports, components_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    exports.containerStyle = exports.cardItemStyle = void 0;
+    exports.customStyle = exports.cardItemStyle = void 0;
     const Theme = components_1.Styles.Theme.ThemeVars;
     exports.cardItemStyle = components_1.Styles.style({
         alignContent: 'stretch',
@@ -29,12 +29,7 @@ define("@scom/page-text-list/index.css.ts", ["require", "exports", "@ijstech/com
         // }
         }
     });
-    exports.containerStyle = components_1.Styles.style({
-        width: Theme.layout.container.width,
-        maxWidth: Theme.layout.container.maxWidth,
-        overflow: Theme.layout.container.overflow,
-        textAlign: Theme.layout.container.textAlign,
-        margin: '0 auto',
+    exports.customStyle = components_1.Styles.style({
         $nest: {
             'i-link > a': {
                 textDecoration: 'none'
@@ -156,20 +151,21 @@ define("@scom/page-text-list", ["require", "exports", "@ijstech/components", "@s
         }
         renderList() {
             this.pnlCard.clearInnerHTML();
-            const columnsPerRow = this.data.length || 1;
-            const width = 100 / columnsPerRow + '%';
+            // const columnsPerRow = this.data.length || 1
+            // const width = 100 / columnsPerRow + '%'
             const lytItems = (this.$render("i-hstack", { width: '100%', padding: { bottom: '1rem', left: '1rem', right: '1rem' }, gap: this.model.tag?.gap || '1rem', horizontalAlignment: 'center', background: { color: Theme.background.main }, wrap: 'wrap' }));
             this.pnlCard.appendChild(lytItems);
             this.data.forEach((product) => {
                 const { title, description, image, link } = product;
-                const { borderRadius = 0, imageWidth = "auto", imageHeight = "100px", titleFontSize = "1.125rem", descriptionFontSize = "0.875rem", imageRadius = 0, itemMaxWidth = "100%" } = this.model.tag;
-                lytItems.append(this.$render("i-grid-layout", { width: width, stack: { grow: '0', shrink: '1' }, maxWidth: itemMaxWidth, class: index_css_1.cardItemStyle, gap: { column: '1rem', row: '1.5rem' }, templateRows: image ? ['100px', '1fr'] : [], background: { color: Theme.background.paper }, padding: { top: '1rem', bottom: '1rem' }, border: { radius: borderRadius }, mediaQueries: [
+                const { borderRadius = 0, imageWidth = "auto", imageHeight = "100px", titleFontSize = "1.125rem", descriptionFontSize = "0.875rem", imageRadius = 0, itemMaxWidth = "100%", itemPadding = { top: '0', bottom: '0', left: '0', right: '0' } } = this.model.tag;
+                lytItems.append(this.$render("i-grid-layout", { stack: { grow: '1', shrink: '1', basis: "0%" }, maxWidth: itemMaxWidth, class: index_css_1.cardItemStyle, gap: { column: '1rem', row: '1.5rem' }, background: { color: Theme.background.paper }, border: { radius: borderRadius }, padding: itemPadding, mediaQueries: [
                         { maxWidth: "767px", properties: { width: '100%' } }
                     ] },
-                    image ? this.$render("i-image", { width: imageWidth, maxHeight: imageHeight, margin: { left: 'auto', right: 'auto' }, padding: { top: '0.5rem', left: '0.5rem', right: '0.5rem', bottom: '0.5rem' }, overflow: "hidden", border: { radius: imageRadius }, background: { color: Theme.background.default }, url: image, fallbackUrl: index_1.default.fullPath('img/placeholder.jpg') }) : [],
-                    this.$render("i-vstack", { gap: "1rem", padding: { left: '1rem', right: '1rem' }, height: "100%", verticalAlignment: 'space-between', class: "text-center" },
-                        this.$render("i-label", { caption: title || '', visible: !!title, font: { weight: 600, size: typeof titleFontSize === 'number' ? `${titleFontSize}px` : titleFontSize, color: Theme.text.primary } }),
-                        this.$render("i-label", { caption: description || '', visible: !!description, font: { color: Theme.text.secondary, size: typeof descriptionFontSize === 'number' ? `${descriptionFontSize}px` : descriptionFontSize } }),
+                    image ? this.$render("i-image", { width: imageWidth, height: imageHeight, margin: { left: 'auto', right: 'auto' }, padding: { top: '0.5rem', left: '0.5rem', right: '0.5rem', bottom: '0.5rem' }, overflow: "hidden", border: { radius: imageRadius }, background: { color: Theme.background.default }, url: image, fallbackUrl: index_1.default.fullPath('img/placeholder.jpg') }) : [],
+                    this.$render("i-vstack", { gap: "1rem", height: "100%", verticalAlignment: 'space-between', class: "text-center" },
+                        this.$render("i-vstack", { gap: "1rem", class: "text-center", width: "100%", height: "100%" },
+                            this.$render("i-label", { caption: title || '', visible: !!title, font: { weight: 600, size: typeof titleFontSize === 'number' ? `${titleFontSize}px` : titleFontSize, color: Theme.text.primary } }),
+                            this.$render("i-label", { caption: description || '', visible: !!description, font: { color: Theme.text.secondary, size: typeof descriptionFontSize === 'number' ? `${descriptionFontSize}px` : descriptionFontSize } })),
                         link?.caption ?
                             this.$render("i-panel", null,
                                 this.$render("i-button", { caption: link.caption, padding: { left: '1rem', right: '1rem', top: '0.5rem', bottom: '0.5rem' }, font: { color: Theme.action.active, size: '20px' }, background: { color: Theme.action.activeBackground }, boxShadow: 'none', margin: { left: 'auto', right: 'auto' }, onClick: () => window.location.href = link.url })) : [])));
@@ -204,7 +200,7 @@ define("@scom/page-text-list", ["require", "exports", "@ijstech/components", "@s
         }
         render() {
             return (this.$render("i-panel", { id: 'pnlBlock', background: { color: 'transparent' }, margin: { left: 'auto', right: 'auto' } },
-                this.$render("i-panel", { id: 'pnlCard', class: index_css_1.containerStyle })));
+                this.$render("i-panel", { id: 'pnlCard', class: index_css_1.customStyle })));
         }
     };
     ScomPageTextList = __decorate([
