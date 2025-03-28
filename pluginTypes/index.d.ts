@@ -73,7 +73,7 @@ declare module "@scom/page-text-list/model/index.ts" {
         setData(data: ITextList): void;
         private getData;
         private getTag;
-        private setTag;
+        setTag(value: ISettings): void;
         private updateTag;
         getConfigurators(): ({
             name: string;

@@ -42,7 +42,7 @@ export class Model {
     return this._tag || {};
   }
 
-  private setTag(value: ISettings) {
+  setTag(value: ISettings) {
     const newValue = value || {};
     for (let prop in newValue) {
       if (newValue.hasOwnProperty(prop)) {

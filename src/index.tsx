@@ -27,7 +27,50 @@ interface ScomPageTextListElement extends ControlElement {
 }
 
 @customModule
-@customElements("i-page-text-list")
+@customElements("i-page-text-list", {
+  icon: 'stop',
+  props: {
+    data: {
+      type: 'array',
+      default: []
+    }
+  },
+  className: 'ScomPageTextList',
+  events: {},
+  dataSchema: {
+    "type": "object",
+    "properties": {
+      "data": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "title": {
+              "type": "string"
+            },
+            "description": {
+              "type": "string"
+            },
+            "link": {
+              "type": "object",
+              "properties": {
+                "caption": {
+                  "type": "string"
+                },
+                "url": {
+                  "type": "string"
+                }
+              }
+            },
+            "image": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    }
+  }
+})
 export default class ScomPageTextList extends Module {
   private pnlBlock: Panel;
   private pnlCard: Panel
@@ -175,9 +218,10 @@ export default class ScomPageTextList extends Module {
         onUpdateTheme: () => this.onUpdateTheme()
       });
     const data = this.getAttribute('data', true);
-    if (data) {
-      this.setData({ data });
-    }
+    if (data) this.setData({ data });
+
+    const tag = this.getAttribute('tag', true);
+    if (tag) this.model.setTag(tag);
   }
 
   render() {

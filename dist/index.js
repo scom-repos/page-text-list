@@ -194,9 +194,11 @@ define("@scom/page-text-list", ["require", "exports", "@ijstech/components", "@s
                 onUpdateTheme: () => this.onUpdateTheme()
             });
             const data = this.getAttribute('data', true);
-            if (data) {
+            if (data)
                 this.setData({ data });
-            }
+            const tag = this.getAttribute('tag', true);
+            if (tag)
+                this.model.setTag(tag);
         }
         render() {
             return (this.$render("i-panel", { id: 'pnlBlock', background: { color: 'transparent' }, margin: { left: 'auto', right: 'auto' } },
@@ -205,7 +207,50 @@ define("@scom/page-text-list", ["require", "exports", "@ijstech/components", "@s
     };
     ScomPageTextList = __decorate([
         components_3.customModule,
-        (0, components_3.customElements)("i-page-text-list")
+        (0, components_3.customElements)("i-page-text-list", {
+            icon: 'stop',
+            props: {
+                data: {
+                    type: 'array',
+                    default: []
+                }
+            },
+            className: 'ScomPageTextList',
+            events: {},
+            dataSchema: {
+                "type": "object",
+                "properties": {
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "title": {
+                                    "type": "string"
+                                },
+                                "description": {
+                                    "type": "string"
+                                },
+                                "link": {
+                                    "type": "object",
+                                    "properties": {
+                                        "caption": {
+                                            "type": "string"
+                                        },
+                                        "url": {
+                                            "type": "string"
+                                        }
+                                    }
+                                },
+                                "image": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        })
     ], ScomPageTextList);
     exports.default = ScomPageTextList;
 });
