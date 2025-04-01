@@ -1,4 +1,4 @@
-import { ISettings, ITextItem, ITextList } from "../global/index";
+import { ISettings, ITextItem, ITextList } from "../interface";
 
 interface IOptions {
   onUpdateBlock: () => void;
