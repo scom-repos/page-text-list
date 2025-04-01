@@ -1,6 +1,6 @@
-/// <amd-module name="@scom/page-text-list/global/interface.ts" />
-declare module "@scom/page-text-list/global/interface.ts" {
-    import { ISpace } from "@ijstech/components";
+/// <amd-module name="@scom/page-text-list/interface.ts" />
+declare module "@scom/page-text-list/interface.ts" {
+    import { IBorder, IFont, ISpace } from "@ijstech/components";
     interface ITextItem {
         title?: string;
         description?: string;
@@ -14,33 +14,34 @@ declare module "@scom/page-text-list/global/interface.ts" {
         data?: ITextItem[];
     }
     interface IColors {
-        backgroundColor?: string;
-        titleColor?: string;
-        descriptionColor?: string;
-        linkColor?: string;
-        linkBackgroundColor?: string;
-        itemBackgroundColor?: string;
-        imageBackgroundColor?: string;
+    }
+    interface IStyles {
+        width?: string | number;
+        height?: string | number;
+        background?: {
+            color?: string;
+        };
+        border?: IBorder;
+        font?: IFont;
+        maxWidth?: string | number;
+        padding?: ISpace;
     }
     interface ISettings {
         maxWidth?: string | number;
+        background?: {
+            color?: string;
+        };
         gap?: string | number;
-        borderRadius?: string | number;
-        imageWidth?: string | number;
-        imageHeight?: string | number;
-        titleFontSize?: string | number;
-        descriptionFontSize?: string | number;
-        imageRadius?: string | number;
-        itemMaxWidth?: string | number;
-        itemPadding?: ISpace;
+        border?: IBorder;
         light?: IColors;
         dark?: IColors;
+        item?: IStyles;
+        image?: IStyles;
+        title?: IStyles;
+        description?: IStyles;
+        link?: IStyles;
     }
     export { ISettings, ITextItem, ITextList };
-}
-/// <amd-module name="@scom/page-text-list/global/index.ts" />
-declare module "@scom/page-text-list/global/index.ts" {
-    export { ISettings, ITextItem, ITextList } from "@scom/page-text-list/global/interface.ts";
 }
 /// <amd-module name="@scom/page-text-list/index.css.ts" />
 declare module "@scom/page-text-list/index.css.ts" {
@@ -57,7 +58,7 @@ declare module "@scom/page-text-list/assets/index.ts" {
 }
 /// <amd-module name="@scom/page-text-list/model/index.ts" />
 declare module "@scom/page-text-list/model/index.ts" {
-    import { ISettings, ITextItem, ITextList } from "@scom/page-text-list/global/index.ts";
+    import { ISettings, ITextItem, ITextList } from "@scom/page-text-list/interface.ts";
     interface IOptions {
         onUpdateBlock: () => void;
         onUpdateTheme: () => void;
@@ -94,10 +95,14 @@ declare module "@scom/page-text-list/model/index.ts" {
         })[];
     }
 }
+/// <amd-module name="@scom/page-text-list/utils.ts" />
+declare module "@scom/page-text-list/utils.ts" {
+    export const merge: (...objects: any[]) => any;
+}
 /// <amd-module name="@scom/page-text-list" />
 declare module "@scom/page-text-list" {
     import { Module, ControlElement, Container } from '@ijstech/components';
-    import { ITextItem } from "@scom/page-text-list/global/index.ts";
+    import { ITextItem } from "@scom/page-text-list/interface.ts";
     global {
         namespace JSX {
             interface IntrinsicElements {

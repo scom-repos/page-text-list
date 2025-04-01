@@ -7,10 +7,11 @@ import {
   customModule,
   Container
 } from '@ijstech/components';
-import { ITextList, ITextItem } from './global/index';
+import { ITextList, ITextItem } from './interface';
 import { cardItemStyle, customStyle } from './index.css';
 import assets from './assets/index';
 import { Model } from './model/index';
+import { merge } from './utils';
 
 const Theme = Styles.Theme.ThemeVars;
 
@@ -104,14 +105,61 @@ export default class ScomPageTextList extends Module {
     this.pnlCard.clearInnerHTML()
     // const columnsPerRow = this.data.length || 1
     // const width = 100 / columnsPerRow + '%'
+    const defaultValues = {
+      image: {
+        width: "auto",
+        height: "100px"
+      },
+      title: {
+        font: {
+          size: "1.125rem",
+          bold: true
+        }
+      },
+      description: {
+        font: {
+          size: "0.875rem",
+          color: Theme.text.secondary
+        }
+      },
+      link: {
+        font: {
+          size: "20px",
+          color: Theme.action.active
+        },
+        background: {
+          color: Theme.action.activeBackground
+        }
+      },
+      item: {
+        padding: { top: '0', bottom: '0', left: '0', right: '0' },
+        maxWidth: "100%"
+      },
+      background: {
+        color: "transparent"
+      }
+    }
+
+    const merged = merge(defaultValues, this.model.tag);
+
+    const {
+      gap,
+      border,
+      background,
+      image: imageStyles,
+      title: titleStyles,
+      description: descriptionStyles,
+      item: itemStyles,
+      link: linkStyles,
+    } = merged;
 
     const lytItems = (
       <i-hstack
         width='100%'
         padding={{ bottom: '1rem', left: '1rem', right: '1rem' }}
-        gap={this.model.tag?.gap || '1rem'}
+        gap={gap || '1rem'}
         horizontalAlignment='center'
-        background={{color: Theme.background.main}}
+        background={background}
         wrap='wrap'
       ></i-hstack>
     )
@@ -119,38 +167,28 @@ export default class ScomPageTextList extends Module {
 
     this.data.forEach((product: ITextItem) => {
       const { title, description, image, link } = product;
-      const {
-        borderRadius = 0,
-        imageWidth = "auto",
-        imageHeight = "100px",
-        titleFontSize = "1.125rem",
-        descriptionFontSize = "0.875rem",
-        imageRadius = 0,
-        itemMaxWidth = "100%",
-        itemPadding = { top: '0', bottom: '0', left: '0', right: '0' }
-      } = this.model.tag;
 
       lytItems.append(
         <i-grid-layout
           stack={{grow: '1', shrink: '1', basis: "0%"}}
-          maxWidth={itemMaxWidth}
+          maxWidth={itemStyles?.maxWidth}
           class={cardItemStyle}
           gap={{ column: '1rem', row: '1.5rem' }}
-          background={{ color: Theme.background.paper }}
-          border={{ radius: borderRadius }}
-          padding={itemPadding}
+          background={itemStyles?.background}
+          border={border}
+          padding={itemStyles?.padding}
           mediaQueries={[
             { maxWidth: "767px", properties: { width: '100%' } }
           ]}
         >
           {image ? <i-image
-            width={imageWidth}
-            height={imageHeight}
+            width={imageStyles?.width}
+            height={imageStyles?.height}
             margin={{ left: 'auto', right: 'auto' }}
             padding={{ top: '0.5rem', left: '0.5rem', right: '0.5rem', bottom: '0.5rem' }}
             overflow="hidden"
-            border={{radius: imageRadius}}
-            background={{color: Theme.background.default}}
+            border={imageStyles?.border}
+            background={imageStyles?.background}
             url={image}
             fallbackUrl={assets.fullPath('img/placeholder.jpg')}
           ></i-image> : []}
@@ -164,12 +202,12 @@ export default class ScomPageTextList extends Module {
               <i-label
                 caption={title || ''}
                 visible={!!title}
-                font={{ weight: 600, size: typeof titleFontSize === 'number' ? `${titleFontSize}px` : titleFontSize, color: Theme.text.primary }}
+                font={titleStyles?.font}
               ></i-label>
               <i-label
                 caption={description || ''}
                 visible={!!description}
-                font={{ color: Theme.text.secondary, size: typeof descriptionFontSize === 'number' ? `${descriptionFontSize}px` : descriptionFontSize }}
+                font={descriptionStyles?.font}
               ></i-label>
             </i-vstack>
             {
@@ -178,11 +216,14 @@ export default class ScomPageTextList extends Module {
                   <i-button
                     caption={link.caption}
                     padding={{ left: '1rem', right: '1rem', top: '0.5rem', bottom: '0.5rem' }}
-                    font={{ color: Theme.action.active, size: '20px' }}
-                    background={{ color: Theme.action.activeBackground }}
+                    font={linkStyles?.font}
+                    background={linkStyles?.background}
                     boxShadow='none'
                     margin={{ left: 'auto', right: 'auto' }}
-                    onClick={() => window.location.href = link.url}
+                    onClick={() => {
+                      if (this._designMode) return;
+                      window.location.href = link.url;
+                    }}
                   ></i-button>
                 </i-panel> : []
             }

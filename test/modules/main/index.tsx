@@ -92,10 +92,21 @@ export default class Main extends Module {
     const config2 = this.pageBlock2.getConfigurators().find(item => item.target === 'Builders');
     if (config2?.setTag) {
       config2.setTag({
-        imageRadius: 10,
-        imageWidth: 200,
-        imageHeight: 120,
-        descriptionFontSize: '16px',
+        "title": {
+          "color": "#FA8930",
+          "size": "30px"
+        },
+        "description": {
+          "color": "#5D0D07",
+          "size": "20px"
+        },
+        "image": {
+          "width": "220px",
+          "height": "220px",
+          "background": {
+            "color": "white"
+          }
+        },
         light: {
           imageBackgroundColor: '#fff',
           itemBackgroundColor: "#5D0D07",
