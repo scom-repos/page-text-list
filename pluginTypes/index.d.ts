@@ -25,6 +25,9 @@ declare module "@scom/page-text-list/interface.ts" {
         font?: IFont;
         maxWidth?: string | number;
         padding?: ISpace;
+        margin?: ISpace;
+        gap?: string | number;
+        boxShadow?: string;
     }
     interface ISettings {
         maxWidth?: string | number;
@@ -40,6 +43,7 @@ declare module "@scom/page-text-list/interface.ts" {
         title?: IStyles;
         description?: IStyles;
         link?: IStyles;
+        columnsPerRow?: number;
     }
     export { ISettings, ITextItem, ITextList };
 }
@@ -123,7 +127,7 @@ declare module "@scom/page-text-list" {
         private setData;
         private onUpdateBlock;
         private renderList;
-        private updateStyle;
+        private renderRow;
         private onUpdateTheme;
         getConfigurators(): ({
             name: string;

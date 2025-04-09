@@ -25,6 +25,9 @@ interface IStyles {
   font?: IFont;
   maxWidth?: string|number;
   padding?: ISpace;
+  margin?: ISpace;
+  gap?: string|number;
+  boxShadow?: string;
 }
 
 interface ISettings {
@@ -39,6 +42,7 @@ interface ISettings {
   title?: IStyles;
   description?: IStyles;
   link?: IStyles;
+  columnsPerRow?: number;
 }
 
 export {

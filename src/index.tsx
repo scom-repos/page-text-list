@@ -7,7 +7,7 @@ import {
   customModule,
   Container
 } from '@ijstech/components';
-import { ITextList, ITextItem } from './interface';
+import { ITextList, ITextItem, ISettings } from './interface';
 import { cardItemStyle, customStyle } from './index.css';
 import assets from './assets/index';
 import { Model } from './model/index';
@@ -103,8 +103,6 @@ export default class ScomPageTextList extends Module {
 
   private renderList() {
     this.pnlCard.clearInnerHTML()
-    // const columnsPerRow = this.data.length || 1
-    // const width = 100 / columnsPerRow + '%'
     const defaultValues = {
       image: {
         width: "auto",
@@ -142,6 +140,20 @@ export default class ScomPageTextList extends Module {
 
     const merged = merge(defaultValues, this.model.tag);
 
+    if (merged.columnsPerRow) {
+      const columnsPerRow = merged.columnsPerRow;
+      const rows = Math.ceil(this.data.length / columnsPerRow);
+      for (let i = 0; i < rows; i++) {
+        const start = i * columnsPerRow;
+        const data = this.data.slice(start, start + columnsPerRow);
+        this.renderRow(data, merged);
+      }
+    } else {
+      this.renderRow(this.data, merged);
+    }
+  }
+
+  private renderRow(data: ITextItem[], tag: ISettings) {
     const {
       gap,
       border,
@@ -150,8 +162,8 @@ export default class ScomPageTextList extends Module {
       title: titleStyles,
       description: descriptionStyles,
       item: itemStyles,
-      link: linkStyles,
-    } = merged;
+      link: linkStyles
+    } = tag;
 
     const lytItems = (
       <i-hstack
@@ -165,7 +177,7 @@ export default class ScomPageTextList extends Module {
     )
     this.pnlCard.appendChild(lytItems)
 
-    this.data.forEach((product: ITextItem) => {
+    data.forEach((product: ITextItem) => {
       const { title, description, image, link } = product;
 
       lytItems.append(
@@ -173,10 +185,11 @@ export default class ScomPageTextList extends Module {
           stack={{grow: '1', shrink: '1', basis: "0%"}}
           maxWidth={itemStyles?.maxWidth}
           class={cardItemStyle}
-          gap={{ column: '1rem', row: '1.5rem' }}
+          gap={{ column: '1rem', row: itemStyles.gap ?? '1.5rem' }}
           background={itemStyles?.background}
           border={border}
           padding={itemStyles?.padding}
+          boxShadow={itemStyles?.boxShadow ?? 'none'}
           mediaQueries={[
             { maxWidth: "767px", properties: { width: '100%' } }
           ]}
@@ -233,19 +246,19 @@ export default class ScomPageTextList extends Module {
     })
   }
 
-  private updateStyle(name: string, value: any) {
-    value ? this.style.setProperty(name, value) : this.style.removeProperty(name);
-  }
+  // private updateStyle(name: string, value: any) {
+  //   value ? this.style.setProperty(name, value) : this.style.removeProperty(name);
+  // }
 
   private onUpdateTheme() {
-    const themeVar = document.body.style.getPropertyValue('--theme') || 'dark';
-    this.updateStyle('--text-primary', this.model.tag[themeVar]?.titleColor);
-    this.updateStyle('--background-main', this.model.tag[themeVar]?.backgroundColor);
-    this.updateStyle('--text-secondary', this.model.tag[themeVar]?.descriptionColor);
-    this.updateStyle('--action-active_background', this.model.tag[themeVar]?.linkBackgroundColor);
-    this.updateStyle('--action-active', this.model.tag[themeVar]?.linkColor);
-    this.updateStyle('--background-paper', this.model.tag[themeVar]?.itemBackgroundColor);
-    this.updateStyle('--background-default', this.model.tag[themeVar]?.imageBackgroundColor);
+    // const themeVar = document.body.style.getPropertyValue('--theme') || 'dark';
+    // this.updateStyle('--text-primary', this.model.tag[themeVar]?.titleColor);
+    // this.updateStyle('--background-main', this.model.tag[themeVar]?.backgroundColor);
+    // this.updateStyle('--text-secondary', this.model.tag[themeVar]?.descriptionColor);
+    // this.updateStyle('--action-active_background', this.model.tag[themeVar]?.linkBackgroundColor);
+    // this.updateStyle('--action-active', this.model.tag[themeVar]?.linkColor);
+    // this.updateStyle('--background-paper', this.model.tag[themeVar]?.itemBackgroundColor);
+    // this.updateStyle('--background-default', this.model.tag[themeVar]?.imageBackgroundColor);
   }
 
   getConfigurators() {

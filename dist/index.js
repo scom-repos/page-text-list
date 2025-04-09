@@ -167,8 +167,6 @@ define("@scom/page-text-list", ["require", "exports", "@ijstech/components", "@s
         }
         renderList() {
             this.pnlCard.clearInnerHTML();
-            // const columnsPerRow = this.data.length || 1
-            // const width = 100 / columnsPerRow + '%'
             const defaultValues = {
                 image: {
                     width: "auto",
@@ -204,12 +202,26 @@ define("@scom/page-text-list", ["require", "exports", "@ijstech/components", "@s
                 }
             };
             const merged = (0, utils_1.merge)(defaultValues, this.model.tag);
-            const { gap, border, background, image: imageStyles, title: titleStyles, description: descriptionStyles, item: itemStyles, link: linkStyles, } = merged;
+            if (merged.columnsPerRow) {
+                const columnsPerRow = merged.columnsPerRow;
+                const rows = Math.ceil(this.data.length / columnsPerRow);
+                for (let i = 0; i < rows; i++) {
+                    const start = i * columnsPerRow;
+                    const data = this.data.slice(start, start + columnsPerRow);
+                    this.renderRow(data, merged);
+                }
+            }
+            else {
+                this.renderRow(this.data, merged);
+            }
+        }
+        renderRow(data, tag) {
+            const { gap, border, background, image: imageStyles, title: titleStyles, description: descriptionStyles, item: itemStyles, link: linkStyles } = tag;
             const lytItems = (this.$render("i-hstack", { width: '100%', padding: { bottom: '1rem', left: '1rem', right: '1rem' }, gap: gap || '1rem', horizontalAlignment: 'center', background: background, wrap: 'wrap' }));
             this.pnlCard.appendChild(lytItems);
-            this.data.forEach((product) => {
+            data.forEach((product) => {
                 const { title, description, image, link } = product;
-                lytItems.append(this.$render("i-grid-layout", { stack: { grow: '1', shrink: '1', basis: "0%" }, maxWidth: itemStyles?.maxWidth, class: index_css_1.cardItemStyle, gap: { column: '1rem', row: '1.5rem' }, background: itemStyles?.background, border: border, padding: itemStyles?.padding, mediaQueries: [
+                lytItems.append(this.$render("i-grid-layout", { stack: { grow: '1', shrink: '1', basis: "0%" }, maxWidth: itemStyles?.maxWidth, class: index_css_1.cardItemStyle, gap: { column: '1rem', row: itemStyles.gap ?? '1.5rem' }, background: itemStyles?.background, border: border, padding: itemStyles?.padding, boxShadow: itemStyles?.boxShadow ?? 'none', mediaQueries: [
                         { maxWidth: "767px", properties: { width: '100%' } }
                     ] },
                     image ? this.$render("i-image", { width: imageStyles?.width, height: imageStyles?.height, margin: { left: 'auto', right: 'auto' }, padding: { top: '0.5rem', left: '0.5rem', right: '0.5rem', bottom: '0.5rem' }, overflow: "hidden", border: imageStyles?.border, background: imageStyles?.background, url: image, fallbackUrl: index_1.default.fullPath('img/placeholder.jpg') }) : [],
@@ -226,18 +238,18 @@ define("@scom/page-text-list", ["require", "exports", "@ijstech/components", "@s
                                     } })) : [])));
             });
         }
-        updateStyle(name, value) {
-            value ? this.style.setProperty(name, value) : this.style.removeProperty(name);
-        }
+        // private updateStyle(name: string, value: any) {
+        //   value ? this.style.setProperty(name, value) : this.style.removeProperty(name);
+        // }
         onUpdateTheme() {
-            const themeVar = document.body.style.getPropertyValue('--theme') || 'dark';
-            this.updateStyle('--text-primary', this.model.tag[themeVar]?.titleColor);
-            this.updateStyle('--background-main', this.model.tag[themeVar]?.backgroundColor);
-            this.updateStyle('--text-secondary', this.model.tag[themeVar]?.descriptionColor);
-            this.updateStyle('--action-active_background', this.model.tag[themeVar]?.linkBackgroundColor);
-            this.updateStyle('--action-active', this.model.tag[themeVar]?.linkColor);
-            this.updateStyle('--background-paper', this.model.tag[themeVar]?.itemBackgroundColor);
-            this.updateStyle('--background-default', this.model.tag[themeVar]?.imageBackgroundColor);
+            // const themeVar = document.body.style.getPropertyValue('--theme') || 'dark';
+            // this.updateStyle('--text-primary', this.model.tag[themeVar]?.titleColor);
+            // this.updateStyle('--background-main', this.model.tag[themeVar]?.backgroundColor);
+            // this.updateStyle('--text-secondary', this.model.tag[themeVar]?.descriptionColor);
+            // this.updateStyle('--action-active_background', this.model.tag[themeVar]?.linkBackgroundColor);
+            // this.updateStyle('--action-active', this.model.tag[themeVar]?.linkColor);
+            // this.updateStyle('--background-paper', this.model.tag[themeVar]?.itemBackgroundColor);
+            // this.updateStyle('--background-default', this.model.tag[themeVar]?.imageBackgroundColor);
         }
         getConfigurators() {
             return this.model.getConfigurators();
