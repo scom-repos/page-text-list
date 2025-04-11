@@ -24,6 +24,7 @@ declare module "@scom/page-text-list/interface.ts" {
         border?: IBorder;
         font?: IFont;
         maxWidth?: string | number;
+        minWidth?: string | number;
         padding?: ISpace;
         margin?: ISpace;
         gap?: string | number;

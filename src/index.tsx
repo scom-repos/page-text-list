@@ -130,8 +130,7 @@ export default class ScomPageTextList extends Module {
         }
       },
       item: {
-        padding: { top: '0', bottom: '0', left: '0', right: '0' },
-        maxWidth: "100%"
+        padding: { top: '0', bottom: '0', left: '0', right: '0' }
       },
       background: {
         color: "transparent"
@@ -140,17 +139,7 @@ export default class ScomPageTextList extends Module {
 
     const merged = merge(defaultValues, this.model.tag);
 
-    if (merged.columnsPerRow) {
-      const columnsPerRow = merged.columnsPerRow;
-      const rows = Math.ceil(this.data.length / columnsPerRow);
-      for (let i = 0; i < rows; i++) {
-        const start = i * columnsPerRow;
-        const data = this.data.slice(start, start + columnsPerRow);
-        this.renderRow(data, merged);
-      }
-    } else {
-      this.renderRow(this.data, merged);
-    }
+    this.renderRow(this.data, merged);
   }
 
   private renderRow(data: ITextItem[], tag: ISettings) {
@@ -158,6 +147,7 @@ export default class ScomPageTextList extends Module {
       gap,
       border,
       background,
+      columnsPerRow,
       image: imageStyles,
       title: titleStyles,
       description: descriptionStyles,
@@ -165,101 +155,116 @@ export default class ScomPageTextList extends Module {
       link: linkStyles
     } = tag;
 
+    const length = this.data.length;
+    const rows = columnsPerRow ? Math.ceil(length / columnsPerRow) : length;
+
+    const isValidNumber = (value: string | number) => {
+      return value && value !== 'auto' && value !== '100%';
+    }
+
+    let maxWidth = isValidNumber(itemStyles?.maxWidth) ? itemStyles.maxWidth : undefined;
+    if (maxWidth !== undefined && !isNaN(Number(maxWidth))) maxWidth = `${maxWidth}px`;
+    let width = isValidNumber(itemStyles?.width) ? itemStyles.width : undefined;
+    if (width !== undefined && !isNaN(Number(width))) width = `${width}px`;
+
+    const repeatWidth = width || maxWidth || '1fr';
+    const repeat = columnsPerRow ? `repeat(${rows}, ${repeatWidth})` : `repeat(${length}, ${repeatWidth})`;
+
     const lytItems = (
-      <i-hstack
+      <i-card-layout
         width='100%'
         padding={{ bottom: '1rem', left: '1rem', right: '1rem' }}
-        gap={gap || '1rem'}
-        horizontalAlignment='center'
+        gap={{column: gap || '1rem', row: gap || '1rem'}}
+        justifyContent='center'
         background={background}
-        wrap='wrap'
-      ></i-hstack>
+        cardMinWidth={itemStyles?.minWidth}
+        templateColumns={[repeat]}
+        mediaQueries={[
+          {
+            maxWidth: "767px",
+            properties: {
+              templateColumns: [`repeat(1, ${repeatWidth})`]
+            }
+          },
+          {
+            minWidth: "768px",
+            maxWidth: "1024px",
+            properties: {
+              templateColumns: [`repeat(2, ${repeatWidth})`]
+            }
+          }
+        ]}
+      ></i-card-layout>
     )
     this.pnlCard.appendChild(lytItems)
 
     data.forEach((product: ITextItem) => {
       const { title, description, image, link } = product;
 
-      lytItems.append(
-        <i-grid-layout
-          stack={{grow: '1', shrink: '1', basis: "0%"}}
-          maxWidth={itemStyles?.maxWidth}
-          class={cardItemStyle}
-          gap={{ column: '1rem', row: itemStyles.gap ?? '1.5rem' }}
-          background={itemStyles?.background}
-          border={border}
-          padding={itemStyles?.padding}
-          boxShadow={itemStyles?.boxShadow ?? 'none'}
-          mediaQueries={[
-            { maxWidth: "767px", properties: { width: '100%' } }
-          ]}
+      const el = <i-grid-layout
+        maxWidth={itemStyles?.maxWidth}
+        class={cardItemStyle}
+        width="100%"
+        gap={{ column: '1rem', row: itemStyles.gap ?? '1.5rem' }}
+        background={itemStyles?.background}
+        border={border}
+        padding={itemStyles?.padding}
+        boxShadow={itemStyles?.boxShadow ?? 'none'}
+      >
+        {image ? <i-image
+          width={imageStyles?.width}
+          height={imageStyles?.height}
+          margin={{ left: 'auto', right: 'auto' }}
+          padding={{ top: '0.5rem', left: '0.5rem', right: '0.5rem', bottom: '0.5rem' }}
+          overflow="hidden"
+          border={imageStyles?.border}
+          background={imageStyles?.background}
+          url={image}
+          fallbackUrl={assets.fullPath('img/placeholder.jpg')}
+        ></i-image> : []}
+        <i-vstack
+          gap="1rem"
+          height="100%"
+          verticalAlignment='space-between'
+          class="text-center"
         >
-          {image ? <i-image
-            width={imageStyles?.width}
-            height={imageStyles?.height}
-            margin={{ left: 'auto', right: 'auto' }}
-            padding={{ top: '0.5rem', left: '0.5rem', right: '0.5rem', bottom: '0.5rem' }}
-            overflow="hidden"
-            border={imageStyles?.border}
-            background={imageStyles?.background}
-            url={image}
-            fallbackUrl={assets.fullPath('img/placeholder.jpg')}
-          ></i-image> : []}
-          <i-vstack
-            gap="1rem"
-            height="100%"
-            verticalAlignment='space-between'
-            class="text-center"
-          >
-            <i-vstack gap="1rem" class="text-center" width="100%" height="100%">
-              <i-label
-                caption={title || ''}
-                visible={!!title}
-                font={titleStyles?.font}
-              ></i-label>
-              <i-label
-                caption={description || ''}
-                visible={!!description}
-                font={descriptionStyles?.font}
-              ></i-label>
-            </i-vstack>
-            {
-              link?.caption ?
-                <i-panel>
-                  <i-button
-                    caption={link.caption}
-                    padding={{ left: '1rem', right: '1rem', top: '0.5rem', bottom: '0.5rem' }}
-                    font={linkStyles?.font}
-                    background={linkStyles?.background}
-                    boxShadow='none'
-                    margin={{ left: 'auto', right: 'auto' }}
-                    onClick={() => {
-                      if (this._designMode) return;
-                      window.location.href = link.url;
-                    }}
-                  ></i-button>
-                </i-panel> : []
-            }
+          <i-vstack gap="1rem" class="text-center" width="100%" height="100%">
+            <i-label
+              caption={title || ''}
+              visible={!!title}
+              font={titleStyles?.font}
+            ></i-label>
+            <i-label
+              caption={description || ''}
+              visible={!!description}
+              font={descriptionStyles?.font}
+            ></i-label>
           </i-vstack>
-        </i-grid-layout>
-      )
+          {
+            link?.caption ?
+              <i-panel>
+                <i-button
+                  caption={link.caption}
+                  padding={{ left: '1rem', right: '1rem', top: '0.5rem', bottom: '0.5rem' }}
+                  font={linkStyles?.font}
+                  background={linkStyles?.background}
+                  boxShadow='none'
+                  margin={{ left: 'auto', right: 'auto' }}
+                  onClick={() => {
+                    if (this._designMode) return;
+                    window.location.href = link.url;
+                  }}
+                ></i-button>
+              </i-panel> : []
+          }
+        </i-vstack>
+      </i-grid-layout>
+
+      lytItems.append(el);
     })
   }
 
-  // private updateStyle(name: string, value: any) {
-  //   value ? this.style.setProperty(name, value) : this.style.removeProperty(name);
-  // }
-
-  private onUpdateTheme() {
-    // const themeVar = document.body.style.getPropertyValue('--theme') || 'dark';
-    // this.updateStyle('--text-primary', this.model.tag[themeVar]?.titleColor);
-    // this.updateStyle('--background-main', this.model.tag[themeVar]?.backgroundColor);
-    // this.updateStyle('--text-secondary', this.model.tag[themeVar]?.descriptionColor);
-    // this.updateStyle('--action-active_background', this.model.tag[themeVar]?.linkBackgroundColor);
-    // this.updateStyle('--action-active', this.model.tag[themeVar]?.linkColor);
-    // this.updateStyle('--background-paper', this.model.tag[themeVar]?.itemBackgroundColor);
-    // this.updateStyle('--background-default', this.model.tag[themeVar]?.imageBackgroundColor);
-  }
+  private onUpdateTheme() {}
 
   getConfigurators() {
     return this.model.getConfigurators();

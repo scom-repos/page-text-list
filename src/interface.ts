@@ -24,6 +24,7 @@ interface IStyles {
   border?: IBorder;
   font?: IFont;
   maxWidth?: string|number;
+  minWidth?: string|number;
   padding?: ISpace;
   margin?: ISpace;
   gap?: string|number;

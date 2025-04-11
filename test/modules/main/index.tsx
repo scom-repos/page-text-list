@@ -38,6 +38,24 @@ export default class Main extends Module {
         "caption": "Learn more",
         "url": "https://www.ijs.network/defi2+-protocol/decentralised-buyback-protocol"
       },
+    },
+    {
+      "backgroundColor": "#FF9933",
+      "title": "Liquidity Queue Framework",
+      "description": "A novel and efficient approach to on-chain liquidity that complement and enhance the DeFi and DEX ecosystem.",
+      "link": {
+        "caption": "Learn more",
+        "url": "https://www.ijs.network/defi2+-protocol/liquidity-queue-framework"
+      }
+    },
+    {
+      "backgroundColor": "#FF9933",
+      "title": "Open Interchain Protocol",
+      "description": "A more efficient inter-blockchain swapping of chain-native digital assets through the usage of single-asset vaults and decentralised mechanisms.",
+      "link": {
+        "caption": "Learn more",
+        "url": "https://www.ijs.network/defi2+-protocol/open-interchain-protocol"
+      }
     }
   ]
 
@@ -62,36 +80,10 @@ export default class Main extends Module {
 
   init() {
     super.init();
-    const config1 = this.pageBlock1.getConfigurators().find(item => item.target === 'Builders');
-    if (config1?.setTag) {
-      config1.setTag({
-        borderRadius: 10,
-        gap: 20,
-        titleFontSize: 20,
-        descriptionFontSize: 16,
-        itemMaxWidth: 250,
-        "light": {
-          backgroundColor: '#FF9933',
-          titleColor: '#fff',
-          descriptionColor: '#fff',
-          linkColor: '#F39422',
-          linkBackgroundColor: 'transparent',
-          itemBackgroundColor: '#5D0D07',
-        },
-        "dark": {
-          backgroundColor: '#FF9933',
-          titleColor: '#fff',
-          descriptionColor: '#fff',
-          linkColor: '#F39422',
-          linkBackgroundColor: 'transparent',
-          itemBackgroundColor: '#5D0D07',
-        }
-      });
-    }
 
-    const config2 = this.pageBlock2.getConfigurators().find(item => item.target === 'Builders');
-    if (config2?.setTag) {
-      config2.setTag({
+    const config = this.pageBlock1.getConfigurators().find(item => item.target === 'Builders');
+    if (config?.setTag) {
+      config.setTag({
         "title": {
           "color": "#FA8930",
           "size": "30px"
@@ -107,16 +99,7 @@ export default class Main extends Module {
             "color": "white"
           }
         },
-        light: {
-          imageBackgroundColor: '#fff',
-          itemBackgroundColor: "#5D0D07",
-          descriptionColor: '#fff'
-        },
-        dark: {
-          imageBackgroundColor: '#fff',
-          itemBackgroundColor: "#5D0D07",
-          descriptionColor: '#fff',
-        }
+        "columnsPerRow": 3
       })
     }
   }
