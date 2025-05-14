@@ -206,7 +206,7 @@ define("@scom/page-text-list", ["require", "exports", "@ijstech/components", "@s
         renderRow(data, tag) {
             const { gap, border, background, columnsPerRow, image: imageStyles, title: titleStyles, description: descriptionStyles, item: itemStyles, link: linkStyles } = tag;
             const length = this.data.length;
-            const rows = columnsPerRow ? Math.ceil(length / columnsPerRow) : length;
+            const validColumns = columnsPerRow && columnsPerRow > length ? length : columnsPerRow && columnsPerRow < 1 ? 1 : columnsPerRow;
             const isValidNumber = (value) => {
                 return value && value !== 'auto' && value !== '100%';
             };
@@ -216,8 +216,22 @@ define("@scom/page-text-list", ["require", "exports", "@ijstech/components", "@s
             let width = isValidNumber(itemStyles?.width) ? itemStyles.width : undefined;
             if (width !== undefined && !isNaN(Number(width)))
                 width = `${width}px`;
-            const repeatWidth = width || maxWidth || '1fr';
-            const repeat = columnsPerRow ? `repeat(${rows}, ${repeatWidth})` : `repeat(${length}, ${repeatWidth})`;
+            let minWidth = isValidNumber(itemStyles?.minWidth) ? itemStyles.minWidth : undefined;
+            if (minWidth !== undefined && !isNaN(Number(minWidth)))
+                minWidth = `${minWidth}px`;
+            let repeat = '';
+            const repeatWidth = maxWidth || width || '1fr';
+            if (width || minWidth || maxWidth) {
+                if (validColumns) {
+                    repeat = `repeat(${validColumns}, minmax(${minWidth || width || 'auto'}, ${repeatWidth}))`;
+                }
+                else {
+                    repeat = `repeat(auto-fill, minmax(${minWidth || width || 'auto'}, ${repeatWidth}))`;
+                }
+            }
+            else {
+                repeat = `repeat(${validColumns || length}, 1fr)`;
+            }
             const lytItems = (this.$render("i-card-layout", { width: '100%', padding: { bottom: '1rem', left: '1rem', right: '1rem' }, gap: { column: gap || '1rem', row: gap || '1rem' }, justifyContent: 'center', background: background, cardMinWidth: itemStyles?.minWidth, templateColumns: [repeat], mediaQueries: [
                     {
                         maxWidth: "767px",
