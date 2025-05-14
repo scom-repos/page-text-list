@@ -156,7 +156,7 @@ export default class ScomPageTextList extends Module {
     } = tag;
 
     const length = this.data.length;
-    const rows = columnsPerRow ? Math.ceil(length / columnsPerRow) : length;
+    const validColumns = columnsPerRow && columnsPerRow > length ? length : columnsPerRow && columnsPerRow < 1 ? 1 : columnsPerRow;
 
     const isValidNumber = (value: string | number) => {
       return value && value !== 'auto' && value !== '100%';
@@ -166,9 +166,13 @@ export default class ScomPageTextList extends Module {
     if (maxWidth !== undefined && !isNaN(Number(maxWidth))) maxWidth = `${maxWidth}px`;
     let width = isValidNumber(itemStyles?.width) ? itemStyles.width : undefined;
     if (width !== undefined && !isNaN(Number(width))) width = `${width}px`;
+    let minWidth = isValidNumber(itemStyles?.minWidth) ? itemStyles.minWidth : undefined;
+    if (minWidth !== undefined && !isNaN(Number(minWidth))) minWidth = `${minWidth}px`;
 
-    const repeatWidth = width || maxWidth || '1fr';
-    const repeat = columnsPerRow ? `repeat(${rows}, ${repeatWidth})` : `repeat(${length}, ${repeatWidth})`;
+    const repeatWidth = width || minWidth || maxWidth || '1fr';
+    const repeat = validColumns ?
+      `repeat(${validColumns}, ${repeatWidth})` :
+      `repeat(auto-fill, minmax(${minWidth || width || 'auto'}, ${maxWidth || width || '1fr'}))`;
 
     const lytItems = (
       <i-card-layout
