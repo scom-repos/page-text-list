@@ -66,13 +66,13 @@ declare module "@scom/page-text-list/model/index.ts" {
     import { ISettings, ITextItem, ITextList } from "@scom/page-text-list/interface.ts";
     interface IOptions {
         onUpdateBlock: () => void;
-        onUpdateTheme: () => void;
     }
     export class Model {
         private _data;
         private _options;
         private _tag;
         constructor(options: IOptions);
+        set tag(value: ISettings);
         get tag(): ISettings;
         get data(): ITextItem[];
         set data(value: ITextItem[]);
@@ -129,7 +129,6 @@ declare module "@scom/page-text-list" {
         private onUpdateBlock;
         private renderList;
         private renderRow;
-        private onUpdateTheme;
         getConfigurators(): ({
             name: string;
             target: string;
