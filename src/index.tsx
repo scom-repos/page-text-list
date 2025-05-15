@@ -39,34 +39,33 @@ interface ScomPageTextListElement extends ControlElement {
   className: 'ScomPageTextList',
   events: {},
   dataSchema: {
-    "type": "object",
-    "properties": {
-      "data": {
-        "type": "array",
-        "items": {
+    "type": "array",
+    "items": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string",
+          required: false
+        },
+        "description": {
+          "type": "string",
+          required: false
+        },
+        "link": {
           "type": "object",
+          required: false,
           "properties": {
-            "title": {
+            "caption": {
               "type": "string"
             },
-            "description": {
-              "type": "string"
-            },
-            "link": {
-              "type": "object",
-              "properties": {
-                "caption": {
-                  "type": "string"
-                },
-                "url": {
-                  "type": "string"
-                }
-              }
-            },
-            "image": {
+            "url": {
               "type": "string"
             }
           }
+        },
+        "image": {
+          "type": "string",
+          required: false
         }
       }
     }
@@ -277,8 +276,6 @@ export default class ScomPageTextList extends Module {
     })
   }
 
-  private onUpdateTheme() {}
-
   getConfigurators() {
     return this.model.getConfigurators();
   }
@@ -286,8 +283,7 @@ export default class ScomPageTextList extends Module {
   init() {
     super.init();
       this.model = new Model({
-        onUpdateBlock: () => this.onUpdateBlock(),
-        onUpdateTheme: () => this.onUpdateTheme()
+        onUpdateBlock: this.onUpdateBlock.bind(this)
       });
     const data = this.getAttribute('data', true);
     if (data) this.setData({ data });
