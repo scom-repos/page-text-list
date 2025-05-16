@@ -175,7 +175,7 @@ export default class ScomPageTextList extends Module {
       if (validColumns) {
         repeat = `repeat(${validColumns}, minmax(${minWidth || width || 'auto'}, ${repeatWidth}))`;
       } else {
-        repeat = `repeat(auto-fill, minmax(${minWidth || width || 'auto'}, ${repeatWidth}))`;
+        repeat = `repeat(auto-fit, minmax(${minWidth || width || 'auto'}, ${repeatWidth}))`;
       }
     }
     else {
@@ -290,6 +290,7 @@ export default class ScomPageTextList extends Module {
 
     const tag = this.getAttribute('tag', true);
     if (tag) this.model.setTag(tag);
+    this.width = '100%';
   }
 
   render() {
