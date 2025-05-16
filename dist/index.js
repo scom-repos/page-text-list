@@ -230,7 +230,7 @@ define("@scom/page-text-list", ["require", "exports", "@ijstech/components", "@s
                     repeat = `repeat(${validColumns}, minmax(${minWidth || width || 'auto'}, ${repeatWidth}))`;
                 }
                 else {
-                    repeat = `repeat(auto-fill, minmax(${minWidth || width || 'auto'}, ${repeatWidth}))`;
+                    repeat = `repeat(auto-fit, minmax(${minWidth || width || 'auto'}, ${repeatWidth}))`;
                 }
             }
             else {
@@ -284,6 +284,7 @@ define("@scom/page-text-list", ["require", "exports", "@ijstech/components", "@s
             const tag = this.getAttribute('tag', true);
             if (tag)
                 this.model.setTag(tag);
+            this.width = '100%';
         }
         render() {
             return (this.$render("i-panel", { id: 'pnlBlock', background: { color: 'transparent' }, margin: { left: 'auto', right: 'auto' } },
