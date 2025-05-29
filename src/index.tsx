@@ -262,10 +262,7 @@ export default class ScomPageTextList extends Module {
                   background={linkStyles?.background}
                   boxShadow='none'
                   margin={{ left: 'auto', right: 'auto' }}
-                  onClick={() => {
-                    if (this._designMode) return;
-                    window.location.href = link.url;
-                  }}
+                  onClick={() => this.onClickBtn(link.url)}
                 ></i-button>
               </i-panel> : []
           }
@@ -276,15 +273,33 @@ export default class ScomPageTextList extends Module {
     })
   }
 
+  private onClickBtn(href: string) {
+    if (this._designMode || !href) return;
+    const parentSite = this.closest('i-decom-site');
+
+    if (href.startsWith('http://') || href.startsWith('https://')) {
+      window.open(href);
+    } else {
+      if (parentSite) {
+        window.history.pushState('', '', `${href}`);
+        window.dispatchEvent(new Event('popstate'));
+      }
+      else {
+        window.location.href = href;
+      }
+    }
+  }
+
   getConfigurators() {
     return this.model.getConfigurators();
   }
 
   init() {
     super.init();
-      this.model = new Model({
-        onUpdateBlock: this.onUpdateBlock.bind(this)
-      });
+    this.onClickBtn = this.onClickBtn.bind(this);
+    this.model = new Model({
+      onUpdateBlock: this.onUpdateBlock.bind(this)
+    });
     const data = this.getAttribute('data', true);
     if (data) this.setData({ data });
 

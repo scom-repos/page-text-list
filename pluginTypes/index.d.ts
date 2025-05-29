@@ -129,6 +129,7 @@ declare module "@scom/page-text-list" {
         private onUpdateBlock;
         private renderList;
         private renderRow;
+        private onClickBtn;
         getConfigurators(): ({
             name: string;
             target: string;
