@@ -262,19 +262,33 @@ define("@scom/page-text-list", ["require", "exports", "@ijstech/components", "@s
                             this.$render("i-label", { caption: description || '', visible: !!description, font: descriptionStyles?.font })),
                         link?.caption ?
                             this.$render("i-panel", null,
-                                this.$render("i-button", { caption: link.caption, padding: { left: '1rem', right: '1rem', top: '0.5rem', bottom: '0.5rem' }, font: linkStyles?.font, background: linkStyles?.background, boxShadow: 'none', margin: { left: 'auto', right: 'auto' }, onClick: () => {
-                                        if (this._designMode)
-                                            return;
-                                        window.location.href = link.url;
-                                    } })) : []));
+                                this.$render("i-button", { caption: link.caption, padding: { left: '1rem', right: '1rem', top: '0.5rem', bottom: '0.5rem' }, font: linkStyles?.font, background: linkStyles?.background, boxShadow: 'none', margin: { left: 'auto', right: 'auto' }, onClick: () => this.onClickBtn(link.url) })) : []));
                 lytItems.append(el);
             });
+        }
+        onClickBtn(href) {
+            if (this._designMode || !href)
+                return;
+            const parentSite = this.closest('i-decom-site');
+            if (href.startsWith('http://') || href.startsWith('https://')) {
+                window.open(href);
+            }
+            else {
+                if (parentSite) {
+                    window.history.pushState('', '', `${href}`);
+                    window.dispatchEvent(new Event('popstate'));
+                }
+                else {
+                    window.location.href = href;
+                }
+            }
         }
         getConfigurators() {
             return this.model.getConfigurators();
         }
         init() {
             super.init();
+            this.onClickBtn = this.onClickBtn.bind(this);
             this.model = new index_2.Model({
                 onUpdateBlock: this.onUpdateBlock.bind(this)
             });
