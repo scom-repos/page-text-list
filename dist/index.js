@@ -255,7 +255,7 @@ define("@scom/page-text-list", ["require", "exports", "@ijstech/components", "@s
             data.forEach((product) => {
                 const { title, description, image, link } = product;
                 const el = this.$render("i-grid-layout", { maxWidth: itemStyles?.maxWidth, class: index_css_1.cardItemStyle, width: "100%", gap: { column: '1rem', row: itemStyles.gap ?? '1.5rem' }, background: itemStyles?.background, border: border, padding: itemStyles?.padding, boxShadow: itemStyles?.boxShadow ?? 'none' },
-                    image ? this.$render("i-image", { width: imageStyles?.width, height: imageStyles?.height, margin: { left: 'auto', right: 'auto' }, padding: { top: '0.5rem', left: '0.5rem', right: '0.5rem', bottom: '0.5rem' }, overflow: "hidden", border: imageStyles?.border, background: imageStyles?.background, url: image, fallbackUrl: index_1.default.fullPath('img/placeholder.jpg') }) : [],
+                    image ? this.$render("i-image", { width: imageStyles?.width, height: imageStyles?.height, margin: { left: 'auto', right: 'auto' }, padding: { top: '0.5rem', left: '0.5rem', right: '0.5rem', bottom: '0.5rem' }, overflow: "hidden", border: imageStyles?.border, background: imageStyles?.background, url: image, objectFit: 'cover', fallbackUrl: index_1.default.fullPath('img/placeholder.jpg') }) : [],
                     this.$render("i-vstack", { gap: "1rem", height: "100%", verticalAlignment: 'space-between', class: "text-center" },
                         this.$render("i-vstack", { gap: "1rem", class: "text-center", width: "100%", height: "100%" },
                             this.$render("i-label", { caption: title || '', visible: !!title, font: titleStyles?.font }),

@@ -232,6 +232,7 @@ export default class ScomPageTextList extends Module {
           border={imageStyles?.border}
           background={imageStyles?.background}
           url={image}
+          objectFit='cover'
           fallbackUrl={assets.fullPath('img/placeholder.jpg')}
         ></i-image> : []}
         <i-vstack
